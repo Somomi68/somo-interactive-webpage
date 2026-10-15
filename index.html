@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>灰白小兔互動網站 Somo’s Interactive web page</title>
     <style>
         * {
@@ -11,27 +11,30 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-            font-family: 'Courier New', Courier, 'PingFang TC', 'Microsoft JhengHei', monospace;
+            font-family: 'Courier New', Courier, monospace, "Microsoft JhengHei", sans-serif;
         }
+
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #12121a;
+            background-color: #1a1a1a;
             display: flex;
             justify-content: center;
             align-items: center;
         }
+
         #game-container {
             position: relative;
             width: 100vw;
             height: 100vh;
-            max-width: 800px;
-            max-height: 600px;
-            background: #1e1e28;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            max-width: 1000px;
+            max-height: 750px;
+            background: #000;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
             overflow: hidden;
         }
+
         canvas {
             display: block;
             width: 100%;
@@ -39,111 +42,97 @@
             image-rendering: pixelated;
             image-rendering: crisp-edges;
         }
-        
+
         /* UI Overlays */
-        .overlay {
+        #hud {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 2px solid #fff;
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+
+        /* Intro Screen */
+        .overlay-card {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: rgba(20, 20, 25, 0.92);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(18, 18, 26, 0.94);
-            backdrop-filter: blur(4px);
+            padding: 24px;
             z-index: 100;
             color: #fff;
-            padding: 20px;
             text-align: center;
         }
-        .hidden {
-            display: none !important;
+
+        .card-content {
+            background: #2a2a35;
+            border: 4px solid #4a4a5a;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 520px;
+            width: 90%;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
 
-        /* Intro Screen */
-        .intro-card {
-            background: #252533;
-            border: 3px solid #f4d068;
-            border-radius: 16px;
-            padding: 20px;
-            max-width: 500px;
-            width: 92%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            max-height: 90vh;
-            overflow-y: auto;
+        .pixel-preview {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
         }
-        .intro-avatar {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 8px;
-            background: #353548;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid #fff;
-        }
+
         .memorial-date {
-            color: #f4d068;
-            font-size: 1.1rem;
+            color: #ffb74d;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 12px;
             letter-spacing: 1px;
-        }
-        .intro-text {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #e0e0e0;
             margin-bottom: 14px;
-            text-align: left;
         }
-        .rules-box {
-            background: #181822;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 0.82rem;
-            color: #b8c0d0;
+
+        .intro-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #ddd;
             margin-bottom: 16px;
             text-align: left;
-            border-left: 4px solid #f4d068;
-            line-height: 1.5;
+            background: #1f1f28;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ffb74d;
         }
-        .btn-start {
-            background: #f4d068;
-            color: #12121a;
+
+        .btn {
+            background: #4caf50;
+            color: white;
             border: none;
-            padding: 12px 32px;
-            font-size: 1.1rem;
+            padding: 10px 28px;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 25px;
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(244,208,104,0.3);
-            transition: transform 0.15s, background 0.15s;
-        }
-        .btn-start:active {
-            transform: scale(0.95);
-            background: #ffe082;
+            box-shadow: 0 4px 0 #2e7d32;
+            transition: transform 0.1s, background 0.2s;
         }
 
-        /* HUD Progress */
-        #hud {
-            position: absolute;
-            top: 14px;
-            left: 14px;
-            background: rgba(24, 24, 34, 0.85);
-            border: 2px solid #f4d068;
-            border-radius: 18px;
-            padding: 6px 14px;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: bold;
-            pointer-events: none;
-            z-index: 10;
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #2e7d32;
         }
 
-        /* Pure 4-Direction D-Pad Controls */
+        /* D-Pad Only 4 buttons */
         #dpad {
             position: absolute;
             bottom: 16px;
@@ -152,419 +141,160 @@
             height: 130px;
             z-index: 20;
         }
+
         .dbtn {
             position: absolute;
-            width: 40px;
-            height: 40px;
-            background: rgba(244, 208, 104, 0.88);
-            border: 2px solid #ffffff;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.6);
             border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.2rem;
-            color: #12121a;
-            font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
             touch-action: manipulation;
         }
-        .dbtn:active {
-            background: #ffffff;
-        }
-        #btn-up { top: 0; left: 45px; }
-        #btn-down { bottom: 0; left: 45px; }
-        #btn-left { top: 45px; left: 0; }
-        #btn-right { top: 45px; right: 0; }
 
-        /* Dialog & Polaroid Card Overlay */
-        .modal {
+        .dbtn:active {
+            background: rgba(255, 255, 255, 0.6);
+            color: #000;
+        }
+
+        #btn-up { top: 0; left: 44px; }
+        #btn-down { bottom: 0; left: 44px; }
+        #btn-left { top: 44px; left: 0; }
+        #btn-right { top: 44px; right: 0; }
+
+        /* Dialog Box */
+        #dialog-box {
+            position: absolute;
+            bottom: 20px;
+            left: 5%;
+            width: 90%;
+            background: #111;
+            border: 4px solid #fff;
+            border-radius: 8px;
+            padding: 16px;
+            color: #fff;
+            font-size: 15px;
+            line-height: 1.5;
+            display: none;
+            z-index: 80;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+        }
+
+        /* Polaroid Modal */
+        #polaroid-modal {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 15, 0.85);
-            z-index: 150;
-            display: flex;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 90;
+        }
+
+        .polaroid-frame {
+            background: #fff;
+            padding: 16px 16px 24px 16px;
+            border-radius: 4px;
+            width: 85%;
+            max-width: 360px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+            transform: rotate(-1deg);
+        }
+
+        .polaroid-media {
+            width: 100%;
+            height: 240px;
+            background: #eee;
+            object-fit: cover;
+            border-radius: 2px;
+            margin-bottom: 12px;
+        }
+
+        .polaroid-caption {
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Result Banner */
+        #result-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-        }
-        .dialog-box {
-            position: absolute;
-            bottom: 16px;
-            left: 4%;
-            width: 92%;
-            background: #181824;
-            border: 3px solid #fff;
-            border-radius: 10px;
-            padding: 14px;
+            z-index: 110;
             color: #fff;
-            font-size: 1rem;
-            line-height: 1.5;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-            z-index: 120;
-            cursor: pointer;
-        }
-        .polaroid-card {
-            background: #fff;
-            padding: 14px 14px 20px 14px;
-            border-radius: 6px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-            max-width: 360px;
-            width: 88%;
-            text-align: center;
-        }
-        .polaroid-media {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            background: #eee;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .polaroid-caption {
-            color: #333;
-            font-size: 0.9rem;
-            font-weight: bold;
-            line-height: 1.4;
-        }
-        .btn-close-modal {
-            margin-top: 14px;
-            background: #252533;
-            color: #fff;
-            border: none;
-            padding: 8px 22px;
-            border-radius: 18px;
-            cursor: pointer;
-            font-size: 0.85rem;
         }
 
-        /* Result Banners */
-        .result-title {
-            font-size: 2rem;
+        #result-title {
+            font-size: 32px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
         }
-        .win { color: #f4d068; }
-        .lose { color: #ff5252; }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <canvas id="canvas" width="640" height="480"></canvas>
 
-    <!-- HUD Progress Counter -->
-    <div id="hud">
-        <span>🥕 已解鎖記憶: <span id="score-text">0 / 10</span></span>
-    </div>
+    <div id="hud">已解鎖記憶：<span id="score">0</span> / 10</div>
 
-    <!-- D-Pad Directional Controls -->
+    <!-- 4 Direction Keys Only -->
     <div id="dpad">
         <div class="dbtn" id="btn-up">▲</div>
         <div class="dbtn" id="btn-down">▼</div>
-        <div class="dbtn" id="btn-left">◀</div>
-        <div class="dbtn" id="btn-right">▶</div>
+        <div class="dbtn" id="btn-left">◄</div>
+        <div class="dbtn" id="btn-right">►</div>
     </div>
 
-    <!-- Intro Landing Screen -->
-    <div id="intro-screen" class="overlay">
-        <div class="intro-card">
-            <div class="intro-avatar">
-                <canvas id="avatarCanvas" width="48" height="48"></canvas>
-            </div>
+    <!-- Intro Overlay -->
+    <div id="intro-screen" class="overlay-card">
+        <div class="card-content">
+            <canvas id="preview-canvas" class="pixel-preview" width="64" height="64"></canvas>
             <div class="memorial-date">2015.06.08 - 2025.12.27</div>
             <div class="intro-text">
                 歡迎來到小比的互動網站！<br>
                 小比是一隻擁有灰白柔順毛毛、明亮大眼、美麗長睫毛與滿滿個性的聰明好兔寶。<br>
-                請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!
+                請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!<br><br>
+                <strong>🎮 遊戲規則：</strong><br>
+                • 使用右下角方向鍵或鍵盤方向鍵移動小比。<br>
+                • 走遍走道解鎖 10 個記憶物品。<br>
+                • 避開全地圖隨機走動的柴犬！
             </div>
-            <div class="rules-box">
-                🎮 <b>遊戲規則：</b><br>
-                1. 點選右下角 4 方向鍵控制四腳小比行走。<br>
-                2. 走到道路上的 10 個記憶物件上自動解鎖照片與故事。<br>
-                3. 避開 2 隻全地圖巡邏的柴犬，全數解鎖即可獲勝！
-            </div>
-            <button class="btn-start" id="start-btn">點擊「開始！」 ₍ᐢ.ˬ.ᐢ₎✨</button>
+            <button class="btn" onclick="startGame()">開始！</button>
         </div>
     </div>
 
-    <!-- RPG Dialogue Overlay -->
-    <div id="dialog-overlay" class="dialog-box hidden" onclick="closeDialog()">
-        <div id="dialog-text"></div>
-        <div style="font-size:0.75rem; color:#aaa; margin-top:6px; text-align:right;">[ 點擊繼續 ]</div>
+    <!-- Dialog -->
+    <div id="dialog-box">
+        <div id="dialog-text">...</div>
     </div>
 
-    <!-- Polaroid Photo/Video Modal -->
-    <div id="modal-overlay" class="modal hidden">
-        <div class="polaroid-card">
+    <!-- Polaroid -->
+    <div id="polaroid-modal" onclick="closePolaroid()">
+        <div class="polaroid-frame" onclick="event.stopPropagation()">
             <div id="media-container"></div>
-            <div id="modal-caption" class="polaroid-caption"></div>
-            <button class="btn-close-modal" onclick="closeModal()">繼續探索 🐾</button>
+            <div id="polaroid-text" class="polaroid-caption">...</div>
+            <button class="btn" style="margin-top:12px; padding:6px 18px; font-size:12px;" onclick="closePolaroid()">繼續探索</button>
         </div>
     </div>
 
-    <!-- Game Over Result Screen -->
-    <div id="result-screen" class="overlay hidden">
-        <div id="result-title" class="result-title"></div>
-        <p id="result-desc" style="margin-bottom:18px; color:#ddd;"></p>
-        <button class="btn-start" onclick="restartGame()">重新挑戰 🔄</button>
-    </div>
-</div>
-
-<script>
-// --- Web Audio Synthesizer ---
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-
-function initAudio() {
-    if (!audioCtx) audioCtx = new AudioContext();
-}
-
-function playSound(type) {
-    if (!audioCtx) return;
-    try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-
-        if (type === 'pickup') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, now);
-            osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.15);
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-            osc.start(now); osc.stop(now + 0.15);
-        } else if (type === 'win') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(440, now);
-            osc.frequency.setValueAtTime(554.37, now + 0.1);
-            osc.frequency.setValueAtTime(659.25, now + 0.2);
-            osc.frequency.setValueAtTime(880, now + 0.3);
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
-            osc.start(now); osc.stop(now + 0.5);
-        } else if (type === 'lose') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(280, now);
-            osc.frequency.linearRampToValueAtTime(110, now + 0.3);
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-            osc.start(now); osc.stop(now + 0.3);
-        }
-    } catch(e){}
-}
-
-// --- Game Engine Variables ---
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-const TILE_SIZE = 40;
-const COLS = 20;
-const ROWS = 15;
-
-// Maze: 0 = Room Wood Floor, 1 = Bush Wall, 2 = Beach Sand, 3 = Meadow Grass
-const MAZE = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,0,1,0,0,0,0,0,0,1,2,2,2,2,2,2,1],
-    [1,0,1,1,0,1,0,1,1,1,1,0,1,2,2,2,2,2,2,1],
-    [1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,2,2,2,1],
-    [1,0,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1],
-    [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,0,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1],
-    [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1,0,1],
-    [1,0,1,1,1,0,1,1,1,1,1,1,0,1,0,1,0,1,0,1],
-    [1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
-    [1,3,3,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1],
-    [1,3,3,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-    [1,3,3,3,3,3,3,3,3,3,0,1,1,1,0,1,1,1,0,1],
-    [1,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
-
-// 10 Collectible Memory Objects (All placed on walkable roads)
-const ITEMS = [
-    { id: 1, name: "大理石板", x: 1, y: 1, type: "img", file: "p1", text: "天氣太熱啦！瞬間融化成一張冰涼的兔餅 🧊" },
-    { id: 2, name: "講義書本", x: 4, y: 3, type: "img", file: "p2", text: "小比陪考中：主人說讀完這章有點心吃 ₍ᐢ.ˬ.ᐢ₎" },
-    { id: 3, name: "討摸摸椅子", x: 7, y: 5, type: "vid", file: "v1", text: "讀書累了嗎？摸摸小比頭頭可以補充 100% 電量喔！" },
-    { id: 4, name: "蔬果箱", x: 1, y: 7, type: "img", file: "p3", text: "名副其實的櫻桃小嘴🍒" },
-    { id: 5, name: "一綑牧草", x: 11, y: 1, type: "img", file: "p4", text: "平常乾草吃多了，也來點新鮮牧草!" },
-    { id: 6, name: "花色棉被", x: 11, y: 5, type: "vid", file: "v2", text: "小比不愛布製品，棉被 枕頭 衣服 毛巾都攻擊⚡" },
-    { id: 7, name: "綠色便盆", x: 1, y: 9, type: "img", file: "p5", text: "我是隻會用便盆的聰明好兔寶🚽✨" },
-    { id: 8, name: "海浪圖樣", x: 18, y: 3, type: "img", file: "p6", text: "小比雖然沒搭過船，但有在沙灘奔跑、吹過海風呦!" },
-    { id: 9, name: "貓空纜車", x: 10, y: 11, type: "vid", file: "v3", text: "特別的體驗！飛在空中小兔 Cable Car 🚠" },
-    { id: 10, name: "特別草圖樣", x: 18, y: 13, type: "vid", file: "v4", text: "我好像跑太快了嘻嘻～✨" }
-];
-
-let player = {
-    x: 1, y: 3,
-    px: 1 * TILE_SIZE, py: 3 * TILE_SIZE,
-    targetX: 1, targetY: 3,
-    dir: 'right', moving: false, animFrame: 0
-};
-
-let dogs = [
-    { x: 18, y: 1, px: 18 * TILE_SIZE, py: 1 * TILE_SIZE, animFrame: 0 },
-    { x: 1, y: 13, px: 1 * TILE_SIZE, py: 13 * TILE_SIZE, animFrame: 0 }
-];
-
-let unlockedItems = new Set();
-let isGameRunning = false;
-let pendingModalItem = null;
-
-// --- Input Controls ---
-const keys = {};
-window.addEventListener('keydown', e => {
-    initAudio();
-    keys[e.key] = true;
-});
-window.addEventListener('keyup', e => { keys[e.key] = false; });
-
-function bindDpad(id, keyName) {
-    const el = document.getElementById(id);
-    const press = (e) => { e.preventDefault(); initAudio(); keys[keyName] = true; };
-    const release = (e) => { e.preventDefault(); keys[keyName] = false; };
-    el.addEventListener('touchstart', press);
-    el.addEventListener('touchend', release);
-    el.addEventListener('mousedown', press);
-    el.addEventListener('mouseup', release);
-    el.addEventListener('mouseleave', release);
-}
-bindDpad('btn-up', 'ArrowUp');
-bindDpad('btn-down', 'ArrowDown');
-bindDpad('btn-left', 'ArrowLeft');
-bindDpad('btn-right', 'ArrowRight');
-
-// --- Drawing Pixel Graphics ---
-function drawMap() {
-    for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-            const type = MAZE[r][c];
-            const x = c * TILE_SIZE;
-            const y = r * TILE_SIZE;
-
-            if (type === 1) { // Round Bush Wall with Black Outline
-                ctx.fillStyle = '#2d7a32';
-                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                ctx.fillStyle = '#1e5422';
-                ctx.beginPath();
-                ctx.arc(x + 20, y + 20, 17, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#0e2b10';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(x+1, y+1, TILE_SIZE-2, TILE_SIZE-2);
-            } else if (type === 0) { // Wood Room Floor
-                ctx.fillStyle = '#e2ba73';
-                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                ctx.strokeStyle = '#d0a256';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
-            } else if (type === 2) { // Beach Sand
-                ctx.fillStyle = '#f5d38a';
-                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                if (c === COLS - 2) {
-                    ctx.fillStyle = '#3baea9';
-                    ctx.fillRect(x + 26, y, 14, TILE_SIZE);
-                }
-            } else if (type === 3) { // Meadow Grass
-                ctx.fillStyle = '#68d880';
-                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                ctx.fillStyle = '#2e8b57';
-                ctx.fillRect(x + 8, y + 12, 4, 8);
-                ctx.fillRect(x + 24, y + 20, 4, 8);
-            }
-        }
-    }
-}
-
-function drawItems() {
-    ITEMS.forEach(item => {
-        if (unlockedItems.has(item.id)) return;
-        const x = item.x * TILE_SIZE + 6;
-        const y = item.y * TILE_SIZE + 6;
-        const w = 28, h = 28;
-
-        ctx.save();
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-
-        if (item.id === 1) { // 大理石板
-            ctx.fillStyle = '#b0bec5'; ctx.fillRect(x, y+6, w, 16); ctx.strokeRect(x, y+6, w, 16);
-        } else if (item.id === 2) { // 講義
-            ctx.fillStyle = '#ffffff'; ctx.fillRect(x+4, y, 20, 26); ctx.strokeRect(x+4, y, 20, 26);
-            ctx.fillStyle = '#e53935'; ctx.fillRect(x+8, y+6, 12, 3);
-        } else if (item.id === 3) { // 椅子
-            ctx.fillStyle = '#8d6e63'; ctx.fillRect(x+6, y+4, 16, 12);
-            ctx.fillRect(x+6, y+16, 4, 10); ctx.fillRect(x+18, y+16, 4, 10);
-        } else if (item.id === 4) { // 蔬果箱
-            ctx.fillStyle = '#a1887f'; ctx.fillRect(x, y+6, w, 20);
-            ctx.fillStyle = '#e53935';
-            ctx.beginPath(); ctx.arc(x+10, y+12, 4, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(x+18, y+12, 4, 0, Math.PI*2); ctx.fill();
-        } else if (item.id === 5) { // 一綑牧草
-            ctx.fillStyle = '#9ccc65'; ctx.fillRect(x+2, y+8, 24, 14);
-            ctx.fillStyle = '#f57f17'; ctx.fillRect(x+10, y+8, 4, 14);
-        } else if (item.id === 6) { // 棉被
-            ctx.fillStyle = '#ff80ab'; ctx.fillRect(x+2, y+4, 24, 20); ctx.strokeRect(x+2, y+4, 24, 20);
-        } else if (item.id === 7) { // 便盆
-            ctx.fillStyle = '#81c784'; ctx.beginPath(); ctx.arc(x+14, y+14, 11, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-        } else if (item.id === 8) { // 動態海浪
-            ctx.fillStyle = '#29b6f6'; ctx.fillRect(x, y+8, w, 14);
-            ctx.fillStyle = '#fff'; ctx.fillRect(x+4, y+6, 8, 4);
-        } else if (item.id === 9) { // 纜車
-            ctx.fillStyle = '#e53935'; ctx.fillRect(x+4, y+8, 20, 16); ctx.strokeRect(x+4, y+8, 20, 16);
-            ctx.fillStyle = '#81d4fa'; ctx.fillRect(x+8, y+12, 12, 6);
-        } else if (item.id === 10) { // 特別草圖樣
-            ctx.fillStyle = '#2e7d32';
-            ctx.beginPath(); ctx.arc(x+8, y+18, 6, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(x+20, y+18, 6, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(x+14, y+10, 8, 0, Math.PI*2); ctx.fill();
-        }
-        ctx.restore();
-    });
-}
-
-// 4-Legged Somo Pixel Rabbit (Grey fur + Snow-White Neck Scarf)
-function drawPlayer(targetCtx, px, py, dir, animFrame) {
-    targetCtx.save();
-    targetCtx.translate(px, py);
-
-    const hopY = Math.abs(Math.sin(animFrame * 0.3)) * 5;
-
-    targetCtx.strokeStyle = '#000';
-    targetCtx.lineWidth = 2;
-
-    // Body (Grey)
-    targetCtx.fillStyle = '#808080';
-    targetCtx.beginPath();
-    targetCtx.ellipse(20, 24 - hopY, 13, 9, 0, 0, Math.PI * 2);
-    targetCtx.fill(); targetCtx.stroke();
-
-    // Head (Grey)
-    targetCtx.beginPath();
-    targetCtx.arc(dir === 'left' ? 12 : 28, 14 - hopY, 9, 0, Math.PI * 2);
-    targetCtx.fill(); targetCtx.stroke();
-
-    // White Scarf (雪白圍脖)
-    targetCtx.fillStyle = '#ffffff';
-    targetCtx.beginPath();
-    targetCtx.ellipse(dir === 'left' ? 16 : 24, 20 - hopY, 8, 5, 0, 0, Math.PI * 2);
-    targetCtx.fill(); targetCtx.stroke();
-
-    // Ears (Grey)
-    targetCtx.fillStyle = '#808080';
-    targetCtx.fillRect(dir === 'left' ? 8 : 24, 2 - hopY, 4, 10);
-    targetCtx.fillRect(dir === 'left' ? 14 : 28, 2 - hopY, 4, 10);
-
-    // Eye
-    targetCtx.fillStyle = '#000';
-    targetCtx.fillRect(dir === 'left' ? 10 : 28, 12 - hopY, 3, 3);
-
-    // 4 Paws
-    targetCtx.fillStyle = '#ffffff';
-    targetCtx.fillRect(10,
+    <!-- Result
