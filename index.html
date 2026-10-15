@@ -11,205 +11,206 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-            font-family: 'Courier New', Courier, monospace, "Microsoft JhengHei", sans-serif;
         }
 
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #1a1a1a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #1a1a2e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         #game-container {
             position: relative;
             width: 100vw;
             height: 100vh;
-            max-width: 1000px;
-            max-height: 750px;
-            background: #000;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
         }
 
         canvas {
             display: block;
-            width: 100%;
-            height: 100%;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
-        /* UI Overlays */
+        /* 抬頭顯示進度 HUD */
         #hud {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(0, 0, 0, 0.65);
-            border: 2px solid #fff;
-            border-radius: 8px;
-            padding: 6px 12px;
-            color: #fff;
-            font-size: 14px;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 3px solid #333;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 16px;
             font-weight: bold;
+            color: #2c3e50;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
             pointer-events: none;
             z-index: 10;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
         }
 
-        /* Intro Screen */
-        .overlay-card {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(20, 20, 25, 0.92);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            z-index: 100;
-            color: #fff;
-            text-align: center;
-        }
-
-        .card-content {
-            background: #2a2a35;
-            border: 4px solid #4a4a5a;
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 520px;
-            width: 90%;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-        }
-
-        .pixel-preview {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 10px;
-        }
-
-        .memorial-date {
-            color: #ffb74d;
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 14px;
-        }
-
-        .intro-text {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #ddd;
-            margin-bottom: 16px;
-            text-align: left;
-            background: #1f1f28;
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 4px solid #ffb74d;
-        }
-
-        .btn {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 28px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #2e7d32;
-            transition: transform 0.1s, background 0.2s;
-        }
-
-        .btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #2e7d32;
-        }
-
-        /* D-Pad Only 4 buttons */
+        /* 右下角極簡 4 方向鍵 */
         #dpad {
             position: absolute;
-            bottom: 16px;
-            right: 16px;
+            bottom: 20px;
+            right: 20px;
             width: 130px;
             height: 130px;
-            z-index: 20;
+            z-index: 10;
         }
 
-        .dbtn {
+        .d-btn {
             position: absolute;
             width: 42px;
             height: 42px;
-            background: rgba(255, 255, 255, 0.25);
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 18px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 3px solid #3c3c3c;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             touch-action: manipulation;
+            cursor: pointer;
         }
 
-        .dbtn:active {
-            background: rgba(255, 255, 255, 0.6);
-            color: #000;
+        .d-btn:active {
+            background: #ffcc00;
+            transform: scale(0.92);
         }
 
-        #btn-up { top: 0; left: 44px; }
-        #btn-down { bottom: 0; left: 44px; }
-        #btn-left { top: 44px; left: 0; }
+        #btn-up    { top: 0; left: 44px; }
+        #btn-down  { bottom: 0; left: 44px; }
+        #btn-left  { top: 44px; left: 0; }
         #btn-right { top: 44px; right: 0; }
 
-        /* Dialog Box */
-        #dialog-box {
-            position: absolute;
-            bottom: 20px;
-            left: 5%;
-            width: 90%;
-            background: #111;
-            border: 4px solid #fff;
-            border-radius: 8px;
-            padding: 16px;
-            color: #fff;
-            font-size: 15px;
-            line-height: 1.5;
-            display: none;
-            z-index: 80;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-        }
-
-        /* Polaroid Modal */
-        #polaroid-modal {
+        /* 全螢幕開場與彈窗覆蓋 */
+        .overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: none;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 90;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.4s ease;
         }
 
-        .polaroid-frame {
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 視窗卡片 */
+        .card {
+            background: #fff8eb;
+            border: 4px solid #4a3728;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 480px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .card h1 {
+            font-size: 20px;
+            color: #5a3e2b;
+            margin-bottom: 8px;
+        }
+
+        .card .date {
+            font-size: 15px;
+            font-weight: bold;
+            color: #d9534f;
+            background: #ffe8e8;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #4a4a4a;
+            line-height: 1.6;
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .rules-box {
+            background: #f0e6d2;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .btn-start {
+            background: #ffaa00;
+            color: #fff;
+            border: 3px solid #c88000;
+            border-radius: 12px;
+            padding: 10px 28px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #c88000;
+            transition: all 0.1s;
+        }
+
+        .btn-start:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #c88000;
+        }
+
+        /* RPG 對話框與拍立得 */
+        #dialogue-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            background: #222;
+            border: 4px solid #fff;
+            border-radius: 12px;
+            padding: 16px;
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.5;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            z-index: 50;
+            display: none;
+        }
+
+        /* 拍立得彈窗 */
+        .polaroid-card {
             background: #fff;
             padding: 16px 16px 24px 16px;
-            border-radius: 4px;
-            width: 85%;
-            max-width: 360px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
             text-align: center;
-            transform: rotate(-1deg);
+            max-width: 380px;
+            width: 85%;
         }
 
         .polaroid-media {
@@ -217,84 +218,747 @@
             height: 240px;
             background: #eee;
             object-fit: cover;
-            border-radius: 2px;
+            border-radius: 4px;
             margin-bottom: 12px;
         }
 
         .polaroid-caption {
+            font-size: 15px;
             color: #333;
-            font-size: 14px;
             font-weight: bold;
         }
 
-        /* Result Banner */
-        #result-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 110;
-            color: #fff;
-        }
-
-        #result-title {
-            font-size: 32px;
+        .game-title-banner {
+            font-size: 26px;
             font-weight: bold;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
+        .success-text { color: #27ae60; }
+        .fail-text { color: #e74c3c; }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <canvas id="canvas" width="640" height="480"></canvas>
-
     <div id="hud">已解鎖記憶：<span id="score">0</span> / 10</div>
+    <canvas id="canvas"></canvas>
 
-    <!-- 4 Direction Keys Only -->
+    <!-- 右下角 4 方向鍵 -->
     <div id="dpad">
-        <div class="dbtn" id="btn-up">▲</div>
-        <div class="dbtn" id="btn-down">▼</div>
-        <div class="dbtn" id="btn-left">◄</div>
-        <div class="dbtn" id="btn-right">►</div>
+        <div class="d-btn" id="btn-up">▲</div>
+        <div class="d-btn" id="btn-down">▼</div>
+        <div class="d-btn" id="btn-left">◀</div>
+        <div class="d-btn" id="btn-right">▶</div>
     </div>
 
-    <!-- Intro Overlay -->
-    <div id="intro-screen" class="overlay-card">
-        <div class="card-content">
-            <canvas id="preview-canvas" class="pixel-preview" width="64" height="64"></canvas>
-            <div class="memorial-date">2015.06.08 - 2025.12.27</div>
-            <div class="intro-text">
+    <!-- 開場畫面 -->
+    <div id="intro-modal" class="overlay">
+        <div class="card">
+            <h1>灰白小兔互動網站<br>Somo’s Interactive web page</h1>
+            <div class="date">2015.06.08 - 2025.12.27</div>
+            <p>
                 歡迎來到小比的互動網站！<br>
                 小比是一隻擁有灰白柔順毛毛、明亮大眼、美麗長睫毛與滿滿個性的聰明好兔寶。<br>
-                請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!<br><br>
-                <strong>🎮 遊戲規則：</strong><br>
-                • 使用右下角方向鍵或鍵盤方向鍵移動小比。<br>
-                • 走遍走道解鎖 10 個記憶物品。<br>
-                • 避開全地圖隨機走動的柴犬！
+                請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!<br>
+                點擊「開始！」，跟著小比一起漫遊回憶吧 ₍ᐢ.ˬ.ᐢ₎✨
+            </p>
+            <div class="rules-box">
+                <b>🎮 遊戲規則與操作：</b><br>
+                • 控制方式：點擊右下角 4 方向鍵（或鍵盤 ↑↓←→ / WASD）<br>
+                • 任務目標：漫遊迷宮尋找 10 個記憶物件，自動觸碰解鎖照片！<br>
+                • 危險警告：避開 2 隻全地圖漫遊的柴犬，若被碰到則挑戰失敗。
             </div>
-            <button class="btn" onclick="startGame()">開始！</button>
+            <button class="btn-start" onclick="startGame()">開始！</button>
         </div>
     </div>
 
-    <!-- Dialog -->
-    <div id="dialog-box">
-        <div id="dialog-text">...</div>
+    <!-- RPG 對話框 -->
+    <div id="dialogue-box">
+        <div id="dialogue-text">...</div>
     </div>
 
-    <!-- Polaroid -->
-    <div id="polaroid-modal" onclick="closePolaroid()">
-        <div class="polaroid-frame" onclick="event.stopPropagation()">
+    <!-- 拍立得照片/影片彈窗 -->
+    <div id="polaroid-modal" class="overlay hidden" onclick="closePolaroid()">
+        <div class="polaroid-card" onclick="event.stopPropagation()">
             <div id="media-container"></div>
             <div id="polaroid-text" class="polaroid-caption">...</div>
-            <button class="btn" style="margin-top:12px; padding:6px 18px; font-size:12px;" onclick="closePolaroid()">繼續探索</button>
         </div>
     </div>
 
-    <!-- Result
+    <!-- 結局彈窗 (成功/失敗) -->
+    <div id="end-modal" class="overlay hidden">
+        <div class="card" style="text-align: center;">
+            <div id="end-title" class="game-title-banner">...</div>
+            <p id="end-desc" style="text-align: center; font-size: 16px;"></p>
+            <button class="btn-start" onclick="restartGame()">重新挑戰 🔄</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ==================== Web Audio API 音效合成器 ==================== */
+class SoundEngine {
+    constructor() {
+        this.ctx = null;
+        this.bgmTimer = null;
+        this.isMuted = false;
+    }
+    init() {
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+    playTone(freq, duration, type = "square", gainVal = 0.1) {
+        if (!this.ctx) return;
+        try {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+    }
+    playPickup() {
+        this.init();
+        this.playTone(523.25, 0.08, "sine", 0.15);
+        setTimeout(() => this.playTone(659.25, 0.08, "sine", 0.15), 80);
+        setTimeout(() => this.playTone(783.99, 0.15, "sine", 0.15), 160);
+    }
+    playFail() {
+        this.init();
+        this.playTone(300, 0.15, "sawtooth", 0.2);
+        setTimeout(() => this.playTone(220, 0.15, "sawtooth", 0.2), 150);
+        setTimeout(() => this.playTone(150, 0.3, "sawtooth", 0.2), 300);
+    }
+    playWin() {
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((n, i) => {
+            setTimeout(() => this.playTone(n, 0.15, "triangle", 0.2), i * 120);
+        });
+    }
+    startBGM() {
+        this.init();
+        if (this.bgmTimer) return;
+        const melody = [261, 329, 392, 329, 293, 349, 440, 349, 329, 392, 523, 392];
+        let idx = 0;
+        this.bgmTimer = setInterval(() => {
+            if (!this.isMuted) {
+                this.playTone(melody[idx], 0.2, "triangle", 0.03);
+                idx = (idx + 1) % melody.length;
+            }
+        }, 400);
+    }
+}
+const audio = new SoundEngine();
+
+/* ==================== 10 個核心對話與資源數據 ==================== */
+const MEMORIES = [
+    { id: 1, name: "大理石板", x: 2, y: 2, dialog: "天氣太熱啦！瞬間融化成一張冰涼的兔餅 🧊", media: "p1", type: "photo" },
+    { id: 2, name: "講義書本", x: 7, y: 2, dialog: "小比陪考中：主人說讀完這章有點心吃 ₍ᐢ.ˬ.ᐢ₎", media: "p2", type: "photo" },
+    { id: 3, name: "討摸摸椅子", x: 10, y: 2, dialog: "讀書累了嗎？摸摸小比頭頭可以補充 100% 電量喔！", media: "v1", type: "video" },
+    { id: 4, name: "蔬果箱", x: 3, y: 6, dialog: "名副其實的櫻桃小嘴🍒", media: "p3", type: "photo" },
+    { id: 5, name: "一綑牧草", x: 7, y: 5, dialog: "平常乾草吃多了，也來點新鮮牧草!", media: "p4", type: "photo" },
+    { id: 6, name: "花色棉被", x: 12, y: 6, dialog: "小比不愛布製品，棉被 枕頭 衣服 毛巾都攻擊⚡", media: "v2", type: "video" },
+    { id: 7, name: "綠色便盆", x: 2, y: 8, dialog: "我是隻會用便盆的聰明好兔寶🚽✨", media: "p5", type: "photo" },
+    { id: 8, name: "海浪圖樣", x: 14, y: 2, dialog: "小比雖然沒搭過船，但有在沙灘奔跑、吹過海風呦!", media: "p6", type: "photo" },
+    { id: 9, name: "貓空纜車", x: 6, y: 11, dialog: "特別的體驗！飛在空中小兔 Cable Car 🚠", media: "v3", type: "video" },
+    { id: 10, name: "草圖樣", x: 12, y: 11, dialog: "我好像跑太快了嘻嘻～✨", media: "v4", type: "video" }
+];
+
+/* ==================== 地圖迷宮 (16x13 網格) ==================== */
+// 0: 通行走道, 1: 圓潤草叢牆壁
+const MAP_GRID = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1],
+    [1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1],
+    [1,0,1,0,1,0,1,1,1,1,1,0,1,0,0,1],
+    [1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,1,1,1,1,0,1,1,0,1,1,1,1,0,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+    [1,1,1,0,1,1,0,1,0,1,1,1,1,1,0,1],
+    [1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1],
+    [1,0,1,1,1,0,1,1,1,1,1,1,0,1,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,0,1,0,1,1,1,0,1,0,1,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+const COLS = 16;
+const ROWS = 13;
+const TILE_SIZE = 48; // 畫布像素解析度基準
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = COLS * TILE_SIZE;
+canvas.height = ROWS * TILE_SIZE;
+
+let unlockedCount = 0;
+let unlockedSet = new Set();
+let gameState = "INTRO"; // INTRO, PLAYING, DIALOGUE, POLAROID, END
+let currentMem = null;
+
+/* ==================== 角色定義 (小比 & 柴犬) ==================== */
+class Bunny {
+    constructor() {
+        this.x = 1.5 * TILE_SIZE;
+        this.y = 1.5 * TILE_SIZE;
+        this.speed = 3.2; // 60 FPS 平滑連貫位移
+        this.vx = 0;
+        this.vy = 0;
+        this.dir = "down";
+        this.hopFrame = 0;
+    }
+    update() {
+        if (this.vx !== 0 || this.vy !== 0) {
+            let nextX = this.x + this.vx * this.speed;
+            let nextY = this.y + this.vy * this.speed;
+
+            // 碰撞檢測 (邊界帶 padding)
+            if (!checkWallCollision(nextX, this.y, 14)) this.x = nextX;
+            if (!checkWallCollision(this.x, nextY, 14)) this.y = nextY;
+
+            this.hopFrame += 0.25;
+        } else {
+            this.hopFrame = 0;
+        }
+    }
+    draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // 兔子連續跳躍 Hop 弧度
+        let hopY = -Math.abs(Math.sin(this.hopFrame)) * 6;
+        ctx.translate(0, hopY);
+
+        // 陰影
+        ctx.fillStyle = "rgba(0,0,0,0.25)";
+        ctx.beginPath();
+        ctx.ellipse(0, 14 - hopY*0.5, 12, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 黑色輪廓與灰身 (四腳著地姿勢)
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#1a1a1a";
+
+        // 後身 (灰色)
+        ctx.fillStyle = "#8a8a8a";
+        ctx.beginPath();
+        ctx.ellipse(-4, 2, 14, 11, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 灰頭
+        ctx.beginPath();
+        ctx.ellipse(8, -4, 9, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 四肢與腹部延伸 (純白)
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.ellipse(-2, 8, 12, 5, 0, 0, Math.PI * 2); // 腹部
+        ctx.fill();
+        ctx.ellipse(10, 8, 4, 5, 0, 0, Math.PI * 2);  // 前腳
+        ctx.ellipse(-8, 9, 5, 5, 0, 0, Math.PI * 2);  // 後腳
+        ctx.fill();
+
+        // 蓬鬆純白圍脖 (White Ruff)
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.ellipse(4, 0, 7, 9, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 豎立長耳朵 (灰底粉心)
+        ctx.fillStyle = "#8a8a8a";
+        ctx.beginPath();
+        ctx.ellipse(4, -16, 3, 9, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(9, -15, 3, 9, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffb6c1";
+        ctx.beginPath();
+        ctx.ellipse(4, -16, 1.5, 6, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(9, -15, 1.5, 6, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 眼睛 & 嘴巴
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.arc(11, -6, 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 圓滾滾白尾巴
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(-18, 0, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.restore();
+    }
+}
+
+class Shiba {
+    constructor(tileX, tileY) {
+        this.x = (tileX + 0.5) * TILE_SIZE;
+        this.y = (tileY + 0.5) * TILE_SIZE;
+        this.speed = 1.8; // 移動速度略低於小比
+        this.dirs = [ {x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1} ];
+        this.currentDir = this.dirs[Math.floor(Math.random()*4)];
+        this.walkFrame = 0;
+    }
+    update() {
+        let nextX = this.x + this.currentDir.x * this.speed;
+        let nextY = this.y + this.currentDir.y * this.speed;
+
+        // 當遇到牆壁或到達路口時進行智慧隨機轉彎
+        let tileX = Math.floor(this.x / TILE_SIZE);
+        let tileY = Math.floor(this.y / TILE_SIZE);
+        let centerDist = Math.hypot(this.x - (tileX + 0.5)*TILE_SIZE, this.y - (tileY + 0.5)*TILE_SIZE);
+
+        if (checkWallCollision(nextX, nextY, 14) || (centerDist < 2 && Math.random() < 0.25)) {
+            let validDirs = this.dirs.filter(d => !checkWallCollision(this.x + d.x * TILE_SIZE * 0.6, this.y + d.y * TILE_SIZE * 0.6, 14));
+            if (validDirs.length > 0) {
+                this.currentDir = validDirs[Math.floor(Math.random() * validDirs.length)];
+            } else {
+                this.currentDir.x *= -1;
+                this.currentDir.y *= -1;
+            }
+        } else {
+            this.x = nextX;
+            this.y = nextY;
+        }
+
+        this.walkFrame += 0.2;
+    }
+    draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // 踏步動畫
+        let stepY = Math.sin(this.walkFrame) * 2;
+
+        // 陰影
+        ctx.fillStyle = "rgba(0,0,0,0.25)";
+        ctx.beginPath();
+        ctx.ellipse(0, 14, 13, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#1a1a1a";
+
+        // 赤柴赤黃身軀
+        ctx.fillStyle = "#e67e22";
+        ctx.beginPath();
+        ctx.ellipse(0, 2 + stepY, 14, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 赤柴頭部
+        ctx.beginPath();
+        ctx.ellipse(10, -5 + stepY, 8, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 白毛嘴罩與胸前
+        ctx.fillStyle = "#fef5e7";
+        ctx.beginPath();
+        ctx.ellipse(13, -3 + stepY, 5, 4, 0, 0, Math.PI * 2);
+        ctx.ellipse(6, 3 + stepY, 6, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 四肢
+        ctx.fillStyle = "#e67e22";
+        let legAnim = Math.sin(this.walkFrame) * 4;
+        ctx.fillRect(-8, 8, 4, 8 + legAnim);
+        ctx.fillRect(4, 8, 4, 8 - legAnim);
+
+        // 尖耳朵
+        ctx.beginPath();
+        ctx.moveTo(6, -11 + stepY); ctx.lineTo(10, -17 + stepY); ctx.lineTo(12, -10 + stepY);
+        ctx.fill(); ctx.stroke();
+
+        // 黑眉毛與眼睛
+        ctx.fillStyle = "#000";
+        ctx.fillRect(9, -9 + stepY, 3, 2);
+        ctx.beginPath(); ctx.arc(12, -6 + stepY, 1.5, 0, Math.PI * 2); ctx.fill();
+
+        // 捲曲尾巴
+        ctx.fillStyle = "#e67e22";
+        ctx.beginPath();
+        ctx.arc(-14, -6 + stepY, 5, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+
+        ctx.restore();
+    }
+}
+
+function checkWallCollision(px, py, radius) {
+    let minTileX = Math.floor((px - radius) / TILE_SIZE);
+    let maxTileX = Math.floor((px + radius) / TILE_SIZE);
+    let minTileY = Math.floor((py - radius) / TILE_SIZE);
+    let maxTileY = Math.floor((py + radius) / TILE_SIZE);
+
+    for (let r = minTileY; r <= maxTileY; r++) {
+        for (let c = minTileX; c <= maxTileX; c++) {
+            if (r < 0 || r >= ROWS || c < 0 || c >= COLS || MAP_GRID[r][c] === 1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+const bunny = new Bunny();
+const shibas = [new Shiba(8, 6), new Shiba(13, 8)];
+
+/* ==================== 繪圖渲染核心 (全場景質感手繪像素) ==================== */
+function drawScene() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. 三大區域地面背景
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            let x = c * TILE_SIZE;
+            let y = r * TILE_SIZE;
+
+            if (r >= 9) {
+                // 草地區 (佔 30%)
+                ctx.fillStyle = "#55aa55";
+                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                ctx.fillStyle = "#449944";
+                ctx.fillRect(x + 8, y + 8, 4, 4);
+                ctx.fillRect(x + 28, y + 24, 4, 4);
+            } else if (c >= 12 && r <= 4) {
+                // 海邊沙灘與湛藍海浪區 (佔 10%)
+                ctx.fillStyle = "#f4d03f";
+                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                // 藍水波
+                ctx.fillStyle = "#3498db";
+                ctx.fillRect(x + 16, y, TILE_SIZE - 16, TILE_SIZE);
+                // 動態白浪花
+                ctx.fillStyle = "#ffffff";
+                let waveOffset = Math.sin(Date.now() * 0.005 + r) * 4;
+                ctx.fillRect(x + 12 + waveOffset, y, 4, TILE_SIZE);
+            } else {
+                // 房間區 (木紋地板 佔 60%)
+                ctx.fillStyle = "#d5a6bd";
+                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                ctx.strokeStyle = "#c282a5";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+            }
+        }
+    }
+
+    // 2. 帶黑色細輪廓線 (Black Outline) 的圓潤深綠草叢牆壁
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (MAP_GRID[r][c] === 1) {
+                let x = c * TILE_SIZE;
+                let y = r * TILE_SIZE;
+
+                ctx.fillStyle = "#27ae60";
+                ctx.beginPath();
+                ctx.roundRect(x + 2, y + 2, TILE_SIZE - 4, TILE_SIZE - 4, 12);
+                ctx.fill();
+
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#1a1a1a";
+                ctx.stroke();
+
+                // 質感深淺葉片細點
+                ctx.fillStyle = "#1e8449";
+                ctx.beginPath();
+                ctx.arc(x + 16, y + 16, 6, 0, Math.PI * 2);
+                ctx.arc(x + 32, y + 28, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    // 3. 具象化 10 個核心觸及物品 (擺放於道路上)
+    MEMORIES.forEach(m => {
+        let mx = (m.x + 0.5) * TILE_SIZE;
+        let my = (m.y + 0.5) * TILE_SIZE;
+        let isUnlocked = unlockedSet.has(m.id);
+
+        ctx.save();
+        ctx.translate(mx, my);
+
+        // 未解鎖發光特效
+        if (!isUnlocked) {
+            let glow = Math.sin(Date.now() * 0.008) * 4;
+            ctx.fillStyle = "rgba(255, 230, 0, 0.3)";
+            ctx.beginPath();
+            ctx.arc(0, 0, 18 + glow, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#1a1a1a";
+
+        // 針對 10 個物品進行個別具象繪製
+        switch(m.id) {
+            case 1: // 大理石板
+                ctx.fillStyle = "#bdc3c7";
+                ctx.fillRect(-16, -10, 32, 20);
+                ctx.strokeRect(-16, -10, 32, 20);
+                ctx.fillStyle = "#7f8c8d";
+                ctx.fillRect(-8, -4, 16, 2);
+                break;
+            case 2: // 講義書本
+                ctx.fillStyle = "#3498db";
+                ctx.fillRect(-12, -14, 24, 28);
+                ctx.strokeRect(-12, -14, 24, 28);
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(-8, -10, 16, 20);
+                break;
+            case 3: // 木椅子
+                ctx.fillStyle = "#a0522d";
+                ctx.fillRect(-12, -12, 24, 8);
+                ctx.fillRect(-10, -4, 4, 16);
+                ctx.fillRect(6, -4, 4, 16);
+                ctx.strokeRect(-12, -12, 24, 8);
+                break;
+            case 4: // 櫻桃蔬果箱
+                ctx.fillStyle = "#cd853f";
+                ctx.fillRect(-14, -10, 28, 20);
+                ctx.strokeRect(-14, -10, 28, 20);
+                ctx.fillStyle = "#e74c3c"; // 櫻桃
+                ctx.beginPath(); ctx.arc(-4, -2, 4, 0, Math.PI*2); ctx.arc(4, 2, 4, 0, Math.PI*2); ctx.fill();
+                break;
+            case 5: // 一綑綠牧草
+                ctx.fillStyle = "#2ecc71";
+                ctx.beginPath(); ctx.ellipse(0, 0, 16, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "#f1c40f"; // 綁繩
+                ctx.fillRect(-3, -10, 6, 20);
+                break;
+            case 6: // 花色棉被
+                ctx.fillStyle = "#ff7675";
+                ctx.fillRect(-16, -12, 32, 24);
+                ctx.strokeRect(-16, -12, 32, 24);
+                ctx.fillStyle = "#fdcb6e";
+                ctx.fillRect(-8, -6, 16, 12);
+                break;
+            case 7: // 綠色角落便盆
+                ctx.fillStyle = "#27ae60";
+                ctx.beginPath();
+                ctx.moveTo(-14, -14); ctx.lineTo(14, -14); ctx.lineTo(14, 14); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                break;
+            case 8: // 沙灘動態海浪
+                ctx.fillStyle = "#00cec9";
+                ctx.beginPath(); ctx.arc(-6, 0, 8, 0, Math.PI*2); ctx.arc(6, 0, 8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(-10, -2, 20, 4);
+                break;
+            case 9: // 迷你纜車
+                ctx.fillStyle = "#e74c3c";
+                ctx.fillRect(-12, -10, 24, 20);
+                ctx.strokeRect(-12, -10, 24, 20);
+                ctx.fillStyle = "#81ecec"; ctx.fillRect(-8, -6, 16, 8); // 窗戶
+                break;
+            case 10: // 特別草圖樣
+                ctx.fillStyle = "#00b894";
+                ctx.beginPath();
+                ctx.arc(-6, 4, 6, 0, Math.PI*2); ctx.arc(6, 4, 6, 0, Math.PI*2); ctx.arc(0, -4, 8, 0, Math.PI*2);
+                ctx.fill(); ctx.stroke();
+                break;
+        }
+
+        ctx.restore();
+    });
+
+    // 4. 繪製角色
+    shibas.forEach(s => s.draw());
+    bunny.draw();
+}
+
+/* ==================== 遊戲主迴圈與碰撞邏輯 ==================== */
+function gameLoop() {
+    if (gameState === "PLAYING") {
+        bunny.update();
+        shibas.forEach(s => s.update());
+
+        // 1. 檢測是否被柴犬碰到 (距離 < 22 像素)
+        shibas.forEach(s => {
+            if (Math.hypot(bunny.x - s.x, bunny.y - s.y) < 22) {
+                triggerFail();
+            }
+        });
+
+        // 2. 檢測自動觸及記憶物件 (距離 < 26 像素)
+        MEMORIES.forEach(m => {
+            let mx = (m.x + 0.5) * TILE_SIZE;
+            let my = (m.y + 0.5) * TILE_SIZE;
+            if (!unlockedSet.has(m.id) && Math.hypot(bunny.x - mx, bunny.y - my) < 26) {
+                triggerMemory(m);
+            }
+        });
+    }
+
+    drawScene();
+    requestAnimationFrame(gameLoop);
+}
+
+/* ==================== 記憶解鎖與 Modal 流程 ==================== */
+function triggerMemory(mem) {
+    gameState = "DIALOGUE";
+    currentMem = mem;
+    unlockedSet.add(mem.id);
+    unlockedCount = unlockedSet.size;
+    document.getElementById("score").innerText = unlockedCount;
+    audio.playPickup();
+
+    // 顯示 RPG 打字機對話框
+    const box = document.getElementById("dialogue-box");
+    const textEl = document.getElementById("dialogue-text");
+    box.style.display = "block";
+    textEl.innerText = "";
+
+    let i = 0;
+    let timer = setInterval(() => {
+        textEl.innerText += mem.dialog[i];
+        i++;
+        if (i >= mem.dialog.length) {
+            clearInterval(timer);
+            setTimeout(() => {
+                box.style.display = "none";
+                showPolaroid(mem);
+            }, 1200);
+        }
+    }, 50);
+}
+
+function showPolaroid(mem) {
+    gameState = "POLAROID";
+    const modal = document.getElementById("polaroid-modal");
+    const container = document.getElementById("media-container");
+    const caption = document.getElementById("polaroid-text");
+
+    caption.innerText = mem.dialog;
+    container.innerHTML = "";
+
+    // 自動加載 Photo/Video (支援 .jpg / .png 備用)
+    if (mem.type === "photo") {
+        const img = document.createElement("img");
+        img.className = "polaroid-media";
+        img.src = `assets/${mem.media}.jpg`;
+        img.onerror = () => { img.src = `assets/${mem.media}.png`; };
+        container.appendChild(img);
+    } else {
+        const video = document.createElement("video");
+        video.className = "polaroid-media";
+        video.src = `assets/${mem.media}.mp4`;
+        video.autoplay = true;
+        video.loop = true;
+        video.controls = true;
+        container.appendChild(video);
+    }
+
+    modal.classList.remove("hidden");
+}
+
+function closePolaroid() {
+    document.getElementById("polaroid-modal").classList.add("hidden");
+
+    if (unlockedCount >= 10) {
+        triggerWin();
+    } else {
+        gameState = "PLAYING";
+    }
+}
+
+function triggerFail() {
+    gameState = "END";
+    audio.playFail();
+    const modal = document.getElementById("end-modal");
+    document.getElementById("end-title").innerHTML = '<span class="fail-text">挑戰失敗</span>';
+    document.getElementById("end-desc").innerText = "不小心被柴犬碰到啦！小比要小心避開牠們喔 ₍ᐢ.ˬ.ᐢ₎";
+    modal.classList.remove("hidden");
+}
+
+function triggerWin() {
+    gameState = "END";
+    audio.playWin();
+    const modal = document.getElementById("end-modal");
+    document.getElementById("end-title").innerHTML = '<span class="success-text">🎉 挑戰成功 🎉</span>';
+    document.getElementById("end-desc").innerText = "恭喜解鎖屬於小比的全數 10 個生活記憶點！照片與影片已成功珍藏 ✨";
+    modal.classList.remove("hidden");
+}
+
+/* ==================== 操控與按鈕監聽 ==================== */
+const keys = {};
+window.addEventListener("keydown", e => {
+    keys[e.key] = true;
+    updateVelocity();
+});
+window.addEventListener("keyup", e => {
+    keys[e.key] = false;
+    updateVelocity();
+});
+
+function updateVelocity() {
+    if (gameState !== "PLAYING") {
+        bunny.vx = 0; bunny.vy = 0;
+        return;
+    }
+    bunny.vx = 0; bunny.vy = 0;
+    if (keys["ArrowLeft"] || keys["a"] || keys["A"]) bunny.vx = -1;
+    if (keys["ArrowRight"] || keys["d"] || keys["D"]) bunny.vx = 1;
+    if (keys["ArrowUp"] || keys["w"] || keys["W"]) bunny.vy = -1;
+    if (keys["ArrowDown"] || keys["s"] || keys["S"]) bunny.vy = 1;
+}
+
+// 右下角 4 方向鍵觸控綁定
+function bindTouchBtn(id, vx, vy) {
+    const btn = document.getElementById(id);
+    const start = (e) => { e.preventDefault(); if(gameState==="PLAYING"){ bunny.vx = vx; bunny.vy = vy; } };
+    const end = (e) => { e.preventDefault(); if(gameState==="PLAYING"){ bunny.vx = 0; bunny.vy = 0; } };
+
+    btn.addEventListener("touchstart", start);
+    btn.addEventListener("touchend", end);
+    btn.addEventListener("mousedown", start);
+    btn.addEventListener("mouseup", end);
+}
+bindTouchBtn("btn-up", 0, -1);
+bindTouchBtn("btn-down", 0, 1);
+bindTouchBtn("btn-left", -1, 0);
+bindTouchBtn("btn-right", 1, 0);
+
+/* ==================== 遊戲啟動與重置 ==================== */
+function startGame() {
+    document.getElementById("intro-modal").classList.add("hidden");
+    audio.startBGM();
+    gameState = "PLAYING";
+}
+
+function restartGame() {
+    document.getElementById("end-modal").classList.add("hidden");
+    unlockedCount = 0;
+    unlockedSet.clear();
+    document.getElementById("score").innerText = "0";
+
+    // 重置位置
+    bunny.x = 1.5 * TILE_SIZE;
+    bunny.y = 1.5 * TILE_SIZE;
+    shibas[0].x = 8.5 * TILE_SIZE; shibas[0].y = 6.5 * TILE_SIZE;
+    shibas[1].x = 13.5 * TILE_SIZE; shibas[1].y = 8.5 * TILE_SIZE;
+
+    gameState = "PLAYING";
+}
+
+// 啟動主繪圖迴圈
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>
