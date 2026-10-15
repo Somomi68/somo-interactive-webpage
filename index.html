@@ -284,7 +284,7 @@
             </div>
             <div class="rules-box">
                 🎮 <b>遊戲規則：</b><br>
-                1. 點選右下角 4 方向鍵（或方向鍵/WASD）控制四腳小比行走。<br>
+                1. 點選右下角 4 方向鍵控制四腳小比行走。<br>
                 2. 走到道路上的 10 個記憶物件上自動解鎖照片與故事。<br>
                 3. 避開 2 隻全地圖巡邏的柴犬，全數解鎖即可獲勝！
             </div>
@@ -322,7 +322,6 @@ let audioCtx = null;
 
 function initAudio() {
     if (!audioCtx) audioCtx = new AudioContext();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
 function playSound(type) {
@@ -402,4 +401,170 @@ const ITEMS = [
     { id: 10, name: "特別草圖樣", x: 18, y: 13, type: "vid", file: "v4", text: "我好像跑太快了嘻嘻～✨" }
 ];
 
-let player =
+let player = {
+    x: 1, y: 3,
+    px: 1 * TILE_SIZE, py: 3 * TILE_SIZE,
+    targetX: 1, targetY: 3,
+    dir: 'right', moving: false, animFrame: 0
+};
+
+let dogs = [
+    { x: 18, y: 1, px: 18 * TILE_SIZE, py: 1 * TILE_SIZE, animFrame: 0 },
+    { x: 1, y: 13, px: 1 * TILE_SIZE, py: 13 * TILE_SIZE, animFrame: 0 }
+];
+
+let unlockedItems = new Set();
+let isGameRunning = false;
+let pendingModalItem = null;
+
+// --- Input Controls ---
+const keys = {};
+window.addEventListener('keydown', e => {
+    initAudio();
+    keys[e.key] = true;
+});
+window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+function bindDpad(id, keyName) {
+    const el = document.getElementById(id);
+    const press = (e) => { e.preventDefault(); initAudio(); keys[keyName] = true; };
+    const release = (e) => { e.preventDefault(); keys[keyName] = false; };
+    el.addEventListener('touchstart', press);
+    el.addEventListener('touchend', release);
+    el.addEventListener('mousedown', press);
+    el.addEventListener('mouseup', release);
+    el.addEventListener('mouseleave', release);
+}
+bindDpad('btn-up', 'ArrowUp');
+bindDpad('btn-down', 'ArrowDown');
+bindDpad('btn-left', 'ArrowLeft');
+bindDpad('btn-right', 'ArrowRight');
+
+// --- Drawing Pixel Graphics ---
+function drawMap() {
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            const type = MAZE[r][c];
+            const x = c * TILE_SIZE;
+            const y = r * TILE_SIZE;
+
+            if (type === 1) { // Round Bush Wall with Black Outline
+                ctx.fillStyle = '#2d7a32';
+                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                ctx.fillStyle = '#1e5422';
+                ctx.beginPath();
+                ctx.arc(x + 20, y + 20, 17, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#0e2b10';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x+1, y+1, TILE_SIZE-2, TILE_SIZE-2);
+            } else if (type === 0) { // Wood Room Floor
+                ctx.fillStyle = '#e2ba73';
+                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                ctx.strokeStyle = '#d0a256';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+            } else if (type === 2) { // Beach Sand
+                ctx.fillStyle = '#f5d38a';
+                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                if (c === COLS - 2) {
+                    ctx.fillStyle = '#3baea9';
+                    ctx.fillRect(x + 26, y, 14, TILE_SIZE);
+                }
+            } else if (type === 3) { // Meadow Grass
+                ctx.fillStyle = '#68d880';
+                ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                ctx.fillStyle = '#2e8b57';
+                ctx.fillRect(x + 8, y + 12, 4, 8);
+                ctx.fillRect(x + 24, y + 20, 4, 8);
+            }
+        }
+    }
+}
+
+function drawItems() {
+    ITEMS.forEach(item => {
+        if (unlockedItems.has(item.id)) return;
+        const x = item.x * TILE_SIZE + 6;
+        const y = item.y * TILE_SIZE + 6;
+        const w = 28, h = 28;
+
+        ctx.save();
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+
+        if (item.id === 1) { // 大理石板
+            ctx.fillStyle = '#b0bec5'; ctx.fillRect(x, y+6, w, 16); ctx.strokeRect(x, y+6, w, 16);
+        } else if (item.id === 2) { // 講義
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(x+4, y, 20, 26); ctx.strokeRect(x+4, y, 20, 26);
+            ctx.fillStyle = '#e53935'; ctx.fillRect(x+8, y+6, 12, 3);
+        } else if (item.id === 3) { // 椅子
+            ctx.fillStyle = '#8d6e63'; ctx.fillRect(x+6, y+4, 16, 12);
+            ctx.fillRect(x+6, y+16, 4, 10); ctx.fillRect(x+18, y+16, 4, 10);
+        } else if (item.id === 4) { // 蔬果箱
+            ctx.fillStyle = '#a1887f'; ctx.fillRect(x, y+6, w, 20);
+            ctx.fillStyle = '#e53935';
+            ctx.beginPath(); ctx.arc(x+10, y+12, 4, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x+18, y+12, 4, 0, Math.PI*2); ctx.fill();
+        } else if (item.id === 5) { // 一綑牧草
+            ctx.fillStyle = '#9ccc65'; ctx.fillRect(x+2, y+8, 24, 14);
+            ctx.fillStyle = '#f57f17'; ctx.fillRect(x+10, y+8, 4, 14);
+        } else if (item.id === 6) { // 棉被
+            ctx.fillStyle = '#ff80ab'; ctx.fillRect(x+2, y+4, 24, 20); ctx.strokeRect(x+2, y+4, 24, 20);
+        } else if (item.id === 7) { // 便盆
+            ctx.fillStyle = '#81c784'; ctx.beginPath(); ctx.arc(x+14, y+14, 11, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        } else if (item.id === 8) { // 動態海浪
+            ctx.fillStyle = '#29b6f6'; ctx.fillRect(x, y+8, w, 14);
+            ctx.fillStyle = '#fff'; ctx.fillRect(x+4, y+6, 8, 4);
+        } else if (item.id === 9) { // 纜車
+            ctx.fillStyle = '#e53935'; ctx.fillRect(x+4, y+8, 20, 16); ctx.strokeRect(x+4, y+8, 20, 16);
+            ctx.fillStyle = '#81d4fa'; ctx.fillRect(x+8, y+12, 12, 6);
+        } else if (item.id === 10) { // 特別草圖樣
+            ctx.fillStyle = '#2e7d32';
+            ctx.beginPath(); ctx.arc(x+8, y+18, 6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x+20, y+18, 6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x+14, y+10, 8, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
+    });
+}
+
+// 4-Legged Somo Pixel Rabbit (Grey fur + Snow-White Neck Scarf)
+function drawPlayer(targetCtx, px, py, dir, animFrame) {
+    targetCtx.save();
+    targetCtx.translate(px, py);
+
+    const hopY = Math.abs(Math.sin(animFrame * 0.3)) * 5;
+
+    targetCtx.strokeStyle = '#000';
+    targetCtx.lineWidth = 2;
+
+    // Body (Grey)
+    targetCtx.fillStyle = '#808080';
+    targetCtx.beginPath();
+    targetCtx.ellipse(20, 24 - hopY, 13, 9, 0, 0, Math.PI * 2);
+    targetCtx.fill(); targetCtx.stroke();
+
+    // Head (Grey)
+    targetCtx.beginPath();
+    targetCtx.arc(dir === 'left' ? 12 : 28, 14 - hopY, 9, 0, Math.PI * 2);
+    targetCtx.fill(); targetCtx.stroke();
+
+    // White Scarf (雪白圍脖)
+    targetCtx.fillStyle = '#ffffff';
+    targetCtx.beginPath();
+    targetCtx.ellipse(dir === 'left' ? 16 : 24, 20 - hopY, 8, 5, 0, 0, Math.PI * 2);
+    targetCtx.fill(); targetCtx.stroke();
+
+    // Ears (Grey)
+    targetCtx.fillStyle = '#808080';
+    targetCtx.fillRect(dir === 'left' ? 8 : 24, 2 - hopY, 4, 10);
+    targetCtx.fillRect(dir === 'left' ? 14 : 28, 2 - hopY, 4, 10);
+
+    // Eye
+    targetCtx.fillStyle = '#000';
+    targetCtx.fillRect(dir === 'left' ? 10 : 28, 12 - hopY, 3, 3);
+
+    // 4 Paws
+    targetCtx.fillStyle = '#ffffff';
+    targetCtx.fillRect(10,
