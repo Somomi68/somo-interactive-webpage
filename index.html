@@ -1,16 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小比的記憶花園：Somo’s Memory Garden</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1a1a2e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+        }
+
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            box-shadow: 0 0 25px rgba(0,0,0,0.85);
+        }
+
+        /* 抬頭顯示進度 HUD */
+        #hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #333;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* 右下角極簡 4 方向鍵 */
+        #dpad {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 130px;
+            height: 130px;
+            z-index: 10;
+        }
+
+        .d-btn {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.88);
+            border: 3px solid #3c3c3c;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .d-btn:active {
+            background: #ffcc00;
+            transform: scale(0.92);
+        }
+
+        #btn-up    { top: 0; left: 44px; }
+        #btn-down  { bottom: 0; left: 44px; }
+        #btn-left  { top: 44px; left: 0; }
+        #btn-right { top: 44px; right: 0; }
+
+        /* 全螢幕覆蓋彈窗 (已解決隱藏阻擋問題) */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.hidden {
+            display: none !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 視窗卡片 */
+        .card {
+            background: #fff8eb;
+            border: 4px solid #4a3728;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 480px;
+            padding: 26px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .card h1 {
+            font-size: 22px;
+            color: #5a3e2b;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #4a4a4a;
+            line-height: 1.6;
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .rules-box {
+            background: #f0e6d2;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .btn-start {
+            background: #ffaa00;
+            color: #fff;
+            border: 3px solid #c88000;
+            border-radius: 12px;
+            padding: 10px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #c88000;
+            transition: all 0.1s;
+        }
+
+        .btn-start:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #c88000;
+        }
+
+        /* RPG 對話框 */
+        #dialogue-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            background: #222;
+            border: 4px solid #fff;
+            border-radius: 12px;
+            padding: 16px;
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.5;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            z-index: 50;
+            display: none;
+        }
+
+        /* 拍立得彈窗 */
+        .polaroid-card {
+            background: #fff;
+            padding: 16px 16px 24px 16px;
+            border-radius: 8px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+            text-align: center;
+            max-width: 380px;
+            width: 85%;
+        }
+
+        .polaroid-media {
+            width: 100%;
+            height: 240px;
+            background: #eee;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .polaroid-caption {
+            font-size: 15px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .game-title-banner {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        .success-text { color: #27ae60; }
+        .fail-text { color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="hud">已解鎖記憶：<span id="score">0</span> / 10</div>
+    <canvas id="canvas"></canvas>
+
+    <!-- 右下角 4 方向鍵 -->
+    <div id="dpad">
+        <div class="d-btn" id="btn-up">▲</div>
+        <div class="d-btn" id="btn-down">▼</div>
+        <div class="d-btn" id="btn-left">◀</div>
+        <div class="d-btn" id="btn-right">▶</div>
+    </div>
+
+    <!-- 開場畫面 -->
+    <div id="intro-modal" class="overlay">
+        <div class="card">
+            <h1>小比的記憶花園<br>Somo’s Memory Garden</h1>
+            <p>
+                歡迎來到小比的互動網站！<br>
+                小比是一隻擁有灰白柔順毛毛、明亮大眼、美麗長睫毛與滿滿個性的聰明好兔寶。<br>
+                請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!<br>
+                點擊「開始！」，跟著小比一起漫遊回憶吧 ₍ᐢ.ˬ.ᐢ₎✨
+            </p>
+            <div class="rules-box">
+                <b>🎮 遊戲規則與操作：</b><br>
+                • 控制方式：點擊右下角 4 方向鍵（或鍵盤 ↑↓←→ / WASD）<br>
+                • 任務目標：漫遊迷宮尋找 10 個記憶物件，自動觸碰解鎖照片！<br>
+                • 危險警告：避開 2 隻全地圖巡邏的柴犬，若被碰到則挑戰失敗。
+            </div>
+            <button class="btn-start" id="start-btn">開始！</button>
+        </div>
+    </div>
+
+    <!-- RPG 對話框 -->
+    <div id="dialogue-box">
+        <div id="dialogue-text">...</div>
+    </div>
+
+    <!-- 拍立得照片/影片彈窗 -->
+    <div id="polaroid-modal" class="overlay hidden" onclick="closePolaroid()">
+        <div class="polaroid-card" onclick="event.stopPropagation()">
+            <div id="media-container"></div>
+            <div id="polaroid-text" class="polaroid-caption">...</div>
+        </div>
+    </div>
+
+    <!-- 結局彈窗 (成功/失敗) -->
+    <div id="end-modal" class="overlay hidden">
+        <div class="card" style="text-align: center;">
+            <div id="end-title" class="game-title-banner">...</div>
+            <p id="end-desc" style="text-align: center; font-size: 16px;"></p>
+            <button class="btn-start" onclick="restartGame()">重新挑戰 🔄</button>
+        </div>
+    </div>
+</div>
+
 <script>
-/* ==================== Web Audio API 音效合成器 (含自動解鎖) ==================== */
+/* ==================== Web Audio API 音效合成器 ==================== */
 class SoundEngine {
     constructor() {
         this.ctx = null;
         this.bgmTimer = null;
-        this.isMuted = false;
     }
     init() {
         if (!this.ctx) {
             this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        if (this.ctx.state === 'suspended') {
+        if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume();
         }
     }
@@ -54,10 +339,8 @@ class SoundEngine {
         const melody = [261, 329, 392, 329, 293, 349, 440, 349, 329, 392, 523, 392];
         let idx = 0;
         this.bgmTimer = setInterval(() => {
-            if (!this.isMuted) {
-                this.playTone(melody[idx], 0.2, "triangle", 0.03);
-                idx = (idx + 1) % melody.length;
-            }
+            this.playTone(melody[idx], 0.2, "triangle", 0.03);
+            idx = (idx + 1) % melody.length;
         }, 400);
     }
 }
@@ -77,175 +360,4 @@ const MEMORIES = [
     { id: 10, name: "草圖樣", x: 12, y: 11, dialog: "我好像跑太快了嘻嘻～✨", media: "v4", type: "video" }
 ];
 
-/* ==================== 地圖迷宮 (16x13 網格) ==================== */
-const MAP_GRID = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1],
-    [1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1],
-    [1,0,1,0,1,0,1,1,1,1,1,0,1,0,0,1],
-    [1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
-    [1,0,1,1,1,1,0,1,1,0,1,1,1,1,0,1],
-    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-    [1,1,1,0,1,1,0,1,0,1,1,1,1,1,0,1],
-    [1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1],
-    [1,0,1,1,1,0,1,1,1,1,1,1,0,1,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,1,1,0,1,0,1,1,1,0,1,0,1,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
-
-const COLS = 16;
-const ROWS = 13;
-const TILE_SIZE = 48;
-
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-canvas.width = COLS * TILE_SIZE;
-canvas.height = ROWS * TILE_SIZE;
-
-let unlockedCount = 0;
-let unlockedSet = new Set();
-let gameState = "INTRO"; 
-let currentMem = null;
-
-/* ==================== 角色定義 (小比 & 柴犬) ==================== */
-class Bunny {
-    constructor() {
-        this.x = 1.5 * TILE_SIZE;
-        this.y = 1.5 * TILE_SIZE;
-        this.speed = 3.2;
-        this.vx = 0;
-        this.vy = 0;
-        this.hopFrame = 0;
-    }
-    update() {
-        if (this.vx !== 0 || this.vy !== 0) {
-            let nextX = this.x + this.vx * this.speed;
-            let nextY = this.y + this.vy * this.speed;
-
-            if (!checkWallCollision(nextX, this.y, 14)) this.x = nextX;
-            if (!checkWallCollision(this.x, nextY, 14)) this.y = nextY;
-
-            this.hopFrame += 0.25;
-        } else {
-            this.hopFrame = 0;
-        }
-    }
-    draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-
-        let hopY = -Math.abs(Math.sin(this.hopFrame)) * 6;
-        ctx.translate(0, hopY);
-
-        ctx.fillStyle = "rgba(0,0,0,0.25)";
-        ctx.beginPath();
-        ctx.ellipse(0, 14 - hopY*0.5, 12, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#1a1a1a";
-
-        ctx.fillStyle = "#8a8a8a";
-        ctx.beginPath();
-        ctx.ellipse(-4, 2, 14, 11, 0, 0, Math.PI * 2);
-        ctx.fill(); ctx.stroke();
-
-        ctx.beginPath();
-        ctx.ellipse(8, -4, 9, 8, 0, 0, Math.PI * 2);
-        ctx.fill(); ctx.stroke();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.ellipse(-2, 8, 12, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.ellipse(10, 8, 4, 5, 0, 0, Math.PI * 2);
-        ctx.ellipse(-8, 9, 5, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.ellipse(4, 0, 8, 10, -0.2, 0, Math.PI * 2);
-        ctx.fill(); ctx.stroke();
-
-        ctx.fillStyle = "#8a8a8a";
-        ctx.beginPath();
-        ctx.ellipse(4, -16, 3, 9, -0.1, 0, Math.PI * 2);
-        ctx.ellipse(9, -15, 3, 9, 0.2, 0, Math.PI * 2);
-        ctx.fill(); ctx.stroke();
-
-        ctx.fillStyle = "#ffb6c1";
-        ctx.beginPath();
-        ctx.ellipse(4, -16, 1.5, 6, -0.1, 0, Math.PI * 2);
-        ctx.ellipse(9, -15, 1.5, 6, 0.2, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#000000";
-        ctx.beginPath();
-        ctx.arc(11, -6, 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(-18, 0, 4, 0, Math.PI * 2);
-        ctx.fill(); ctx.stroke();
-
-        ctx.restore();
-    }
-}
-
-class Shiba {
-    constructor(tileX, tileY, routeBias) {
-        this.x = (tileX + 0.5) * TILE_SIZE;
-        this.y = (tileY + 0.5) * TILE_SIZE;
-        this.speed = 1.8;
-        this.routeBias = routeBias;
-        this.dirs = [ {x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1} ];
-        this.currentDir = this.dirs[Math.floor(Math.random()*4)];
-        this.walkFrame = 0;
-    }
-    update() {
-        let nextX = this.x + this.currentDir.x * this.speed;
-        let nextY = this.y + this.currentDir.y * this.speed;
-
-        let tileX = Math.floor(this.x / TILE_SIZE);
-        let tileY = Math.floor(this.y / TILE_SIZE);
-        let centerDist = Math.hypot(this.x - (tileX + 0.5)*TILE_SIZE, this.y - (tileY + 0.5)*TILE_SIZE);
-
-        if (checkWallCollision(nextX, nextY, 14) || (centerDist < 2 && Math.random() < 0.35)) {
-            let validDirs = this.dirs.filter(d => !checkWallCollision(this.x + d.x * TILE_SIZE * 0.7, this.y + d.y * TILE_SIZE * 0.7, 14));
-            if (validDirs.length > 0) {
-                if (this.routeBias === "CW") {
-                    this.currentDir = validDirs[Math.floor(Math.random() * validDirs.length)];
-                } else {
-                    this.currentDir = validDirs[validDirs.length - 1];
-                }
-            } else {
-                this.currentDir.x *= -1;
-                this.currentDir.y *= -1;
-            }
-        } else {
-            this.x = nextX;
-            this.y = nextY;
-        }
-
-        this.walkFrame += 0.2;
-    }
-    draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-
-        let stepY = Math.sin(this.walkFrame) * 2;
-
-        ctx.fillStyle = "rgba(0,0,0,0.25)";
-        ctx.beginPath();
-        ctx.ellipse(0, 14, 13, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#1a1a1a";
-
-        ctx.fillStyle = "#e67e22";
-        ctx.beginPath();
-        ctx.ellipse(0, 2 + stepY, 14, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
+/* ==================== 地圖迷宮 (16x13 網格) =
