@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>小比的記憶花園 Somo’s Memory Garden</title>
   <style>
     * {
@@ -11,12 +11,13 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
+      touch-action: manipulation;
     }
-    body, html {
+    html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #1a251e;
+      background-color: #0d130f;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
     #game-container {
@@ -32,34 +33,35 @@
       display: block;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
+      border-radius: 6px;
     }
-    
-    /* HUD 介面 */
+
+    /* HUD 進度介面 */
     #hud {
       position: absolute;
       top: 16px;
       left: 16px;
-      background: rgba(20, 30, 24, 0.85);
-      border: 3px solid #4a7c59;
+      background: rgba(18, 30, 22, 0.9);
+      border: 2px solid #528a62;
       border-radius: 12px;
       padding: 10px 18px;
       color: #f0f7f4;
       font-size: 16px;
       font-weight: bold;
       letter-spacing: 1px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       pointer-events: none;
       z-index: 10;
     }
 
-    /* 右下角控制按鈕 */
+    /* 手機/電腦實體按鈕 UI */
     #controls {
       position: absolute;
       bottom: 20px;
       right: 20px;
-      width: 150px;
-      height: 150px;
+      width: 140px;
+      height: 140px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(3, 1fr);
@@ -67,9 +69,9 @@
       z-index: 10;
     }
     .btn-key {
-      background: #2e4436;
-      border: 2px solid #5b8c6a;
-      border-bottom: 4px solid #1c2b22;
+      background: #2b4233;
+      border: 2px solid #528a62;
+      border-bottom: 4px solid #16241b;
       border-radius: 8px;
       color: #fff;
       font-size: 18px;
@@ -77,13 +79,12 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      touch-action: manipulation;
-      transition: background 0.1s, transform 0.05s;
+      user-select: none;
     }
     .btn-key:active {
       transform: translateY(2px);
       border-bottom-width: 2px;
-      background: #41614d;
+      background: #3e5e49;
     }
     #btn-up { grid-column: 2; grid-row: 1; }
     #btn-left { grid-column: 1; grid-row: 2; }
@@ -97,75 +98,105 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(10, 15, 12, 0.85);
-      backdrop-filter: blur(4px);
+      background: rgba(8, 12, 10, 0.92);
+      backdrop-filter: blur(5px);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 100;
       opacity: 1;
-      transition: opacity 0.3s ease;
+      visibility: visible;
+      transition: opacity 0.15s ease, visibility 0.15s ease;
     }
     .modal-overlay.hidden {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      z-index: -10 !important;
       display: none !important;
-      opacity: 0;
-      pointer-events: none;
     }
     .modal-card {
-      background: #25382c;
-      border: 4px solid #6b9e78;
+      background: #1e2d23;
+      border: 3px solid #528a62;
       border-radius: 16px;
       padding: 24px;
-      max-width: 460px;
-      width: 90%;
+      max-width: 500px;
+      width: 92%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       color: #f0f7f4;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      overflow-y: auto;
     }
     .modal-card h1 {
-      font-size: 22px;
+      font-size: 20px;
       color: #ffd166;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .modal-card p {
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 18px;
-      color: #d8e6dd;
+      margin-bottom: 12px;
+      color: #d0e0d5;
       text-align: left;
+      width: 100%;
+    }
+    .rules-box {
+      background: rgba(15, 23, 18, 0.6);
+      border: 1px solid #36543e;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      width: 100%;
+      text-align: left;
+      font-size: 13px;
+      color: #c2d6c8;
+      line-height: 1.6;
+    }
+    .rules-box h2 {
+      font-size: 14px;
+      color: #ffd166;
+      margin-bottom: 6px;
     }
     .modal-card .btn-action {
-      background: #ffb703;
-      color: #1a251e;
+      background: #ffd166;
+      color: #111a14;
       border: none;
-      padding: 12px 28px;
-      font-size: 16px;
+      padding: 11px 28px;
+      font-size: 15px;
       font-weight: bold;
-      border-radius: 25px;
+      border-radius: 20px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #c78d00;
-      transition: transform 0.1s, background 0.2s;
+      box-shadow: 0 4px 0 #c79e32;
+      transition: transform 0.1s;
+      flex-shrink: 0;
     }
     .modal-card .btn-action:active {
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #c78d00;
+      box-shadow: 0 2px 0 #c79e32;
     }
     
-    /* 記憶對話 Modal 特殊樣式 */
     #memory-media-container {
-      margin: 12px 0;
-      max-height: 240px;
-      overflow: hidden;
+      width: 100%;
+      max-height: 55vh;
+      margin: 10px 0;
       border-radius: 8px;
-      background: #111a14;
+      background: #0f1712;
       display: flex;
       justify-content: center;
       align-items: center;
+      border: 1px solid #36543e;
+      overflow: hidden;
     }
     #memory-media-container img, #memory-media-container video {
-      max-width: 100%;
-      max-height: 240px;
+      width: 100%;
+      height: 100%;
+      max-height: 55vh;
       object-fit: contain;
+      display: block;
     }
   </style>
 </head>
@@ -173,10 +204,10 @@
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
     
-    <!-- HUD -->
+    <!-- HUD 進度 -->
     <div id="hud">已解鎖記憶：<span id="unlocked-count">0</span> / 10</div>
 
-    <!-- 實體按鈕 -->
+    <!-- 實體方向鍵 -->
     <div id="controls">
       <div class="btn-key" id="btn-up">▲</div>
       <div class="btn-key" id="btn-left">◄</div>
@@ -184,26 +215,35 @@
       <div class="btn-key" id="btn-right">►</div>
     </div>
 
-    <!-- 開場簡介 Modal -->
+    <!-- 1. 開場簡介與規則 Modal -->
     <div id="start-modal" class="modal-overlay">
       <div class="modal-card">
         <h1>小比的記憶花園<br>Somo’s Memory Garden</h1>
         <p>小比是一隻擁有灰白柔順毛毛、明亮大眼的聰明好兔寶，請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!</p>
-        <button id="btn-start" class="btn-action">開始！ ₍ᐢ.ˬ.ᐢ₎✨</button>
+        
+        <div class="rules-box">
+          <h2>🎮 遊戲規則與操作指南：</h2>
+          • <b>控制方式</b>：電腦使用鍵盤 <b>↑ ↓ ← → / WASD</b>，手機請點擊右下角方向鍵。<br>
+          • <b>解鎖記憶</b>：踩踏地圖上散落的 <b>10 個核心物品（Emoji）</b> 來觸發專屬故事與照片影片。<br>
+          • <b>避開柴犬</b>：場景中有巡邏的柴犬狗狗，被狗狗碰觸到則<b>挑戰失敗</b>。<br>
+          • <b>勝利條件</b>：收集齊全所有 10 個記憶點即可獲得勝利！
+        </div>
+
+        <button id="btn-start" class="btn-action">開始！跟著小比一起漫遊回憶吧 ₍ᐢ.ˬ.ᐢ₎✨</button>
       </div>
     </div>
 
-    <!-- RPG 記憶對話與媒體 Modal -->
+    <!-- 2. RPG 記憶對話 Modal -->
     <div id="memory-modal" class="modal-overlay hidden">
       <div class="modal-card">
         <h1 id="memory-title">解鎖記憶！</h1>
         <div id="memory-media-container"></div>
-        <p id="memory-text" style="text-align: center; font-size: 16px; font-weight: bold; color: #ffe6a7;"></p>
+        <p id="memory-text" style="text-align: center; font-size: 15px; font-weight: bold; color: #ffe6a7;"></p>
         <button id="btn-close-memory" class="btn-action">繼續探索</button>
       </div>
     </div>
 
-    <!-- 遊戲結束/成功 Modal -->
+    <!-- 3. 勝負結算 Modal -->
     <div id="end-modal" class="modal-overlay hidden">
       <div class="modal-card">
         <h1 id="end-title">挑戰失敗</h1>
@@ -214,74 +254,76 @@
   </div>
 
   <script>
-    // --- 音效發聲器 (Web Audio API 零外部庫) ---
-    class SoundFX {
-      constructor() {
-        this.ctx = null;
-      }
+    // --- 音效引擎 (Web Audio API 安全容錯) ---
+    class SoundEngine {
+      constructor() { this.ctx = null; }
       init() {
-        if (!this.ctx) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        try {
+          if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+        } catch(e) {}
       }
       playUnlock() {
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(523.25, now); // C5
-        osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.3);
-      }
-      playFail() {
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, now);
-        osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.4);
-      }
-      playWin() {
-        if (!this.ctx) return;
-        const notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach((freq, i) => {
-          const now = this.ctx.currentTime + i * 0.12;
+        try {
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.25, now);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.25);
-        });
+          osc.connect(gain); gain.connect(this.ctx.destination);
+          osc.start(now); osc.stop(now + 0.25);
+        } catch(e) {}
+      }
+      playFail() {
+        try {
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(80, now + 0.35);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.connect(gain); gain.connect(this.ctx.destination);
+          osc.start(now); osc.stop(now + 0.35);
+        } catch(e) {}
+      }
+      playWin() {
+        try {
+          if (!this.ctx) return;
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const now = this.ctx.currentTime + i * 0.1;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(now); osc.stop(now + 0.2);
+          });
+        } catch(e) {}
       }
     }
-    const sfx = new SoundFX();
+    const audio = new SoundEngine();
 
-    // --- 遊戲地圖設定與資料 ---
-    const GRID_COLS = 19;
-    const GRID_ROWS = 15;
-    const TILE_SIZE = 32;
-    const CANVAS_WIDTH = GRID_COLS * TILE_SIZE; // 608
-    const CANVAS_HEIGHT = GRID_ROWS * TILE_SIZE; // 480
+    // --- 地圖與尺寸設定 ---
+    const COLS = 19;
+    const ROWS = 15;
+    const TILE = 32;
+    const GAME_W = COLS * TILE; // 608
+    const GAME_H = ROWS * TILE; // 480
 
-    // 地圖 0: 空地(依區域繪製地板), 1: 樹叢牆壁
+    // 地圖陣列：0 可通行，1 樹叢牆壁
     const MAP = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
@@ -300,116 +342,108 @@
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ];
 
-    // 區域劃分判斷
     function getRegion(gx, gy) {
-      if (gx >= 13 && gy <= 5) return 'beach'; // 右上海邊區 (~10%)
-      if (gy >= 11) return 'grass';             // 下方草地區 (~30%)
-      return 'room';                            // 房間區 (~60%)
+      if (gx >= 13 && gy <= 5) return 'beach'; // 右上海邊區 (10%)
+      if (gy >= 11) return 'grass';             // 下方草地區 (30%)
+      return 'room';                            // 房間區 (60%)
     }
 
-    // 10 個核心探索點
+    // 10 個核心對話點 (第 10 個已更新為 🏃‍♂️)
     const MEMORIES = [
-      { id: 1, gx: 1, gy: 1, title: "1. 大理石板 🔳", icon: "🔳", type: "p", src: "assets/p1.jpg", text: "天氣太熱啦！瞬間融化成一張冰涼的兔餅 🧊", unlocked: false },
-      { id: 2, gx: 9, gy: 1, title: "2. 講義書本 📚", icon: "📚", type: "p", src: "assets/p2.jpg", text: "小比陪考中：主人說讀完這章有點心吃 ₍ᐢ.ˬ.ᐢ₎", unlocked: false },
-      { id: 3, gx: 5, gy: 3, title: "3. 討摸摸椅子 🪑", icon: "🪑", type: "v", src: "assets/v1.mp4", text: "讀書累了嗎？摸摸小比頭頭可以補充 100% 電量喔！", unlocked: false },
-      { id: 4, gx: 1, gy: 5, title: "4. 蔬果箱 🍒", icon: "🍒", type: "p", src: "assets/p3.jpg", text: "名副其實的櫻桃小嘴🍒", unlocked: false },
-      { id: 5, gx: 11, gy: 5, title: "5. 一綑牧草 🌿", icon: "🌿", type: "p", src: "assets/p4.jpg", text: "平常乾草吃多了，也來點新鮮牧草!", unlocked: false },
-      { id: 6, gx: 1, gy: 9, title: "6. 花色棉被 🛌", icon: "🛌", type: "v", src: "assets/v2.mp4", text: "小比不愛布製品，棉被 枕頭 衣服 毛巾都攻擊⚡", unlocked: false },
-      { id: 7, gx: 9, gy: 9, title: "7. 綠色便盆 🚽", icon: "🚽", type: "p", src: "assets/p5.jpg", text: "我是隻會用便盆的聰明好兔寶🚽✨", unlocked: false },
-      { id: 8, gx: 17, gy: 1, title: "8. 海浪圖樣 🌊", icon: "🌊", type: "p", src: "assets/p6.jpg", text: "小比雖然沒搭過船，但有在沙灘奔跑、吹過海風呦!", unlocked: false },
-      { id: 9, gx: 1, gy: 13, title: "9. 貓空纜車 🚠", icon: "🚠", type: "v", src: "assets/v3.mp4", text: "特別的體驗！飛在空中小兔 Cable Car 🚠", unlocked: false },
-      { id: 10, gx: 17, gy: 13, title: "10. 草圖樣 🐇🐾", icon: "🐇", type: "v", src: "assets/v4.mp4", text: "我好像跑太快了嘻嘻～✨", unlocked: false }
+      { id: 1, gx: 1, gy: 1, emoji: "🔳", title: "1. 大理石板 🔳", type: "p", src: "assets/p1.jpg", text: "天氣太熱啦！瞬間融化成一張冰涼的兔餅 🧊", unlocked: false },
+      { id: 2, gx: 9, gy: 1, emoji: "📚", title: "2. 講義書本 📚", type: "p", src: "assets/p2.jpg", text: "小比陪考中：主人說讀完這章有點心吃 ₍ᐢ.ˬ.ᐢ₎", unlocked: false },
+      { id: 3, gx: 5, gy: 3, emoji: "🪑", title: "3. 討摸摸椅子 🪑", type: "v", src: "assets/v1.mp4", text: "讀書累了嗎？摸摸小比頭頭可以補充 100% 電量喔！", unlocked: false },
+      { id: 4, gx: 1, gy: 5, emoji: "🍒", title: "4. 蔬果箱 🍒", type: "p", src: "assets/p3.jpg", text: "名副其實的櫻桃小嘴🍒", unlocked: false },
+      { id: 5, gx: 11, gy: 5, emoji: "🌿", title: "5. 一綑牧草 🌿", type: "p", src: "assets/p4.jpg", text: "平常乾草吃多了，也來點新鮮牧草!", unlocked: false },
+      { id: 6, gx: 1, gy: 9, emoji: "🛌", title: "6. 花色棉被 🛌", type: "v", src: "assets/v2.mp4", text: "小比不愛布製品，棉被 枕頭 衣服 毛巾都攻擊⚡", unlocked: false },
+      { id: 7, gx: 9, gy: 9, emoji: "🚽", title: "7. 綠色便盆 🚽", type: "p", src: "assets/p5.jpg", text: "我是隻會用便盆的聰明好兔寶🚽✨", unlocked: false },
+      { id: 8, gx: 17, gy: 1, emoji: "🌊", title: "8. 海浪圖樣 🌊", type: "p", src: "assets/p6.jpg", text: "小比雖然沒搭過船，但有在沙灘奔跑、吹過海風呦!", unlocked: false },
+      { id: 9, gx: 1, gy: 13, emoji: "🚠", title: "9. 貓空纜車 🚠", type: "v", src: "assets/v3.mp4", text: "特別的體驗！飛在空中小兔 Cable Car 🚠", unlocked: false },
+      { id: 10, gx: 17, gy: 13, emoji: "🏃‍♂️", title: "10. 草圖樣 🏃‍♂️", type: "v", src: "assets/v4.mp4", text: "我好像跑太快了嘻嘻～✨", unlocked: false }
     ];
 
-    // Canvas 與繪圖設定
+    // --- Canvas 初始化與自適應 ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
+    canvas.width = GAME_W;
+    canvas.height = GAME_H;
 
-    // 遊戲狀態控制
-    let isGameRunning = false;
-    let isPausedForModal = false;
+    function resizeCanvas() {
+      const w = window.innerWidth || document.documentElement.clientWidth || 800;
+      const h = window.innerHeight || document.documentElement.clientHeight || 600;
+      const scale = Math.max(0.2, Math.min(w / GAME_W, h / GAME_H) * 0.95);
+      canvas.style.width = `${GAME_W * scale}px`;
+      canvas.style.height = `${GAME_H * scale}px`;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // 遊戲狀態
+    let isRunning = false;
+    let isPaused = false;
     let unlockedCount = 0;
-    let animFrameId = null;
     let gameTime = 0;
 
-    // 玩家小比 (Somo) 屬性
+    // 玩家小比
     const player = {
-      x: 3 * TILE_SIZE,
-      y: 1 * TILE_SIZE,
-      targetX: 3 * TILE_SIZE,
-      targetY: 1 * TILE_SIZE,
-      speed: 3,
-      dirX: 0,
-      dirY: 0,
+      gx: 3, gy: 1,
+      x: 3 * TILE, y: 1 * TILE,
+      speed: 2.5,
       facing: 'right',
-      hopOffset: 0
+      isMoving: false
     };
 
-    // 柴犬 AI 類別 (Shiba Inu)
+    // 巡邏柴犬 AI
     class Shiba {
       constructor(gx, gy) {
-        this.x = gx * TILE_SIZE;
-        this.y = gy * TILE_SIZE;
-        this.gx = gx;
-        this.gy = gy;
-        this.targetGx = gx;
-        this.targetGy = gy;
+        this.gx = gx; this.gy = gy;
+        this.x = gx * TILE; this.y = gy * TILE;
+        this.targetGx = gx; this.targetGy = gy;
         this.speed = 1.6;
-        this.dirX = 0;
-        this.dirY = 0;
-        this.chooseNextTarget();
+        this.dirX = 0; this.dirY = 0;
+        this.facing = 'right';
+        this.nextTile();
       }
 
-      chooseNextTarget() {
+      nextTile() {
         this.gx = this.targetGx;
         this.gy = this.targetGy;
-        
-        // 尋找可移動方向
+
+        const options = [];
         const dirs = [
-          { x: 0, y: -1 },
-          { x: 0, y: 1 },
-          { x: -1, y: 0 },
-          { x: 1, y: 0 }
+          { x: 0, y: -1 }, { x: 0, y: 1 },
+          { x: -1, y: 0 }, { x: 1, y: 0 }
         ];
-        
-        const validDirs = dirs.filter(d => {
+
+        dirs.forEach(d => {
           const nx = this.gx + d.x;
           const ny = this.gy + d.y;
-          // 防止 180 度直接回頭 (除非死路)
-          if (dirs.length > 1 && d.x === -this.dirX && d.y === -this.dirY) return false;
-          return MAP[ny] && MAP[ny][nx] === 0;
+          if (MAP[ny] && MAP[ny][nx] === 0) {
+            if (d.x !== -this.dirX || d.y !== -this.dirY) {
+              options.push(d);
+            }
+          }
         });
 
-        let chosen = null;
-        if (validDirs.length > 0) {
-          chosen = validDirs[Math.floor(Math.random() * validDirs.length)];
-        } else {
-          // 死路允許反向
-          chosen = { x: -this.dirX, y: -this.dirY };
-        }
-
-        if (chosen) {
-          this.dirX = chosen.x;
-          this.dirY = chosen.y;
-          this.targetGx = this.gx + chosen.x;
-          this.targetGy = this.gy + chosen.y;
-        }
+        let chosen = options.length > 0 ? options[Math.floor(Math.random() * options.length)] : { x: -this.dirX, y: -this.dirY };
+        this.dirX = chosen.x;
+        this.dirY = chosen.y;
+        this.targetGx = this.gx + chosen.x;
+        this.targetGy = this.gy + chosen.y;
+        if (this.dirX !== 0) this.facing = this.dirX > 0 ? 'right' : 'left';
       }
 
       update() {
-        const targetX = this.targetGx * TILE_SIZE;
-        const targetY = this.targetGy * TILE_SIZE;
-        
-        const dx = targetX - this.x;
-        const dy = targetY - this.y;
+        const tx = this.targetGx * TILE;
+        const ty = this.targetGy * TILE;
+        const dx = tx - this.x;
+        const dy = ty - this.y;
         const dist = Math.hypot(dx, dy);
 
         if (dist <= this.speed) {
-          this.x = targetX;
-          this.y = targetY;
-          this.chooseNextTarget();
+          this.x = tx;
+          this.y = ty;
+          this.nextTile();
         } else {
           this.x += (dx / dist) * this.speed;
           this.y += (dy / dist) * this.speed;
@@ -417,88 +451,331 @@
       }
     }
 
-    const shibas = [
-      new Shiba(9, 7),
-      new Shiba(15, 11)
-    ];
+    const shibas = [new Shiba(9, 7), new Shiba(15, 11)];
 
-    // 輸入監聽器
-    const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, w: false, a: false, s: false, d: false };
-
+    // 輸入鍵盤與觸控監聽
+    const keys = {};
     window.addEventListener('keydown', e => {
-      sfx.init();
-      if (keys.hasOwnProperty(e.key) || ['w','a','s','d','W','A','S','D'].includes(e.key)) {
-        keys[e.key.toLowerCase()] = true;
-      }
+      audio.init();
+      keys[e.key] = true;
     });
+    window.addEventListener('keyup', e => { keys[e.key] = false; });
 
-    window.addEventListener('keyup', e => {
-      if (keys.hasOwnProperty(e.key) || ['w','a','s','d','W','A','S','D'].includes(e.key)) {
-        keys[e.key.toLowerCase()] = false;
-      }
-    });
-
-    // 觸控方向鍵榜定
-    function bindTouchBtn(id, keyName) {
+    function setupTouch(id, keyName) {
       const btn = document.getElementById(id);
-      const start = (e) => { e.preventDefault(); sfx.init(); keys[keyName] = true; };
-      const end = (e) => { e.preventDefault(); keys[keyName] = false; };
-      btn.addEventListener('touchstart', start);
-      btn.addEventListener('touchend', end);
-      btn.addEventListener('mousedown', start);
-      btn.addEventListener('mouseup', end);
-      btn.addEventListener('mouseleave', end);
+      if (!btn) return;
+      const press = (e) => { e.preventDefault(); audio.init(); keys[keyName] = true; };
+      const release = (e) => { e.preventDefault(); keys[keyName] = false; };
+      btn.addEventListener('touchstart', press);
+      btn.addEventListener('touchend', release);
+      btn.addEventListener('mousedown', press);
+      btn.addEventListener('mouseup', release);
     }
-    bindTouchBtn('btn-up', 'ArrowUp');
-    bindTouchBtn('btn-down', 'ArrowDown');
-    bindTouchBtn('btn-left', 'ArrowLeft');
-    bindTouchBtn('btn-right', 'ArrowRight');
+    setupTouch('btn-up', 'ArrowUp');
+    setupTouch('btn-down', 'ArrowDown');
+    setupTouch('btn-left', 'ArrowLeft');
+    setupTouch('btn-right', 'ArrowRight');
 
-    // --- 繪圖邏輯與渲染引擎 ---
+    // --- 主繪圖渲染系統 ---
     function render() {
-      gameTime += 0.05;
-      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      gameTime += 0.04;
+      ctx.clearRect(0, 0, GAME_W, GAME_H);
 
-      // 1. 繪製背景與底色
-      for (let r = 0; r < GRID_ROWS; r++) {
-        for (let c = 0; c < GRID_COLS; c++) {
-          const x = c * TILE_SIZE;
-          const y = r * TILE_SIZE;
+      // 1. 地磚與分區渲染
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const x = c * TILE;
+          const y = r * TILE;
           const reg = getRegion(c, r);
 
           if (MAP[r][c] === 1) {
-            // 深綠立體草叢牆壁 + 黑色邊框
-            ctx.fillStyle = '#1b3a24';
-            ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-            ctx.fillStyle = '#2d5a38';
-            ctx.fillRect(x + 2, y + 2, TILE_SIZE - 4, TILE_SIZE - 4);
-            // 草叢質感
-            ctx.fillStyle = '#3c734a';
-            ctx.fillRect(x + 6, y + 6, 8, 8);
-            ctx.fillRect(x + 18, y + 14, 6, 6);
-            ctx.strokeStyle = '#0a140d';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+            // 深綠樹叢牆壁
+            ctx.fillStyle = '#1c3d26';
+            ctx.fillRect(x, y, TILE, TILE);
+            ctx.fillStyle = '#2b5837';
+            ctx.fillRect(x + 2, y + 2, TILE - 4, TILE - 4);
+            ctx.fillStyle = '#397047';
+            ctx.fillRect(x + 5, y + 5, 8, 8);
+            ctx.fillRect(x + 18, y + 16, 6, 6);
+            ctx.strokeStyle = '#0d1c12';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, TILE, TILE);
           } else {
-            // 道路與分區地面
             if (reg === 'room') {
-              // 溫馨淡木紋地板
               ctx.fillStyle = (c + r) % 2 === 0 ? '#d4a373' : '#c9935f';
-              ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-              ctx.strokeStyle = '#b07d4f';
+              ctx.fillRect(x, y, TILE, TILE);
+              ctx.strokeStyle = '#b37f52';
               ctx.beginPath();
-              ctx.moveTo(x, y + 16); ctx.lineTo(x + TILE_SIZE, y + 16);
+              ctx.moveTo(x, y + 16); ctx.lineTo(x + TILE, y + 16);
               ctx.stroke();
             } else if (reg === 'grass') {
-              // 繁茂深綠草地
               ctx.fillStyle = (c + r) % 2 === 0 ? '#437c40' : '#3a6f37';
-              ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-              // 小花點綴
-              if ((c * 7 + r * 3) % 5 === 0) {
-                ctx.fillStyle = '#ffb703';
-                ctx.fillRect(x + 12, y + 12, 4, 4);
+              ctx.fillRect(x, y, TILE, TILE);
+              if ((c * 3 + r * 7) % 5 === 0) {
+                ctx.fillStyle = '#ffd166';
+                ctx.fillRect(x + 10, y + 10, 3, 3);
               }
             } else if (reg === 'beach') {
-              // 黃色沙灘與雙層白浪花湛藍動態海浪
               ctx.fillStyle = '#e9c46a';
-              ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+              ctx.fillRect(x, y, TILE, TILE);
+              const waveY = Math.sin(gameTime * 2.5 + c) * 3;
+              ctx.fillStyle = '#2a9d8f';
+              ctx.fillRect(x, y + 18 + waveY, TILE, TILE - 18);
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(x, y + 16 + waveY, TILE, 3);
+            }
+          }
+        }
+      }
+
+      // 2. 10 大核心 Emoji 觸碰物件繪製 (圖層調校：發光圈於底層，Emoji 於頂層)
+      MEMORIES.forEach(m => {
+        const mx = m.gx * TILE;
+        const my = m.gy * TILE;
+
+        // 【底層】未解鎖黃色發光圈
+        if (!m.unlocked) {
+          ctx.fillStyle = 'rgba(255, 209, 102, 0.4)';
+          ctx.beginPath();
+          ctx.arc(mx + 16, my + 16, 12 + Math.sin(gameTime * 5) * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 【頂層】觸及物 Emoji
+        ctx.font = '20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(m.emoji, mx + 16, my + 17);
+      });
+
+      // 3. 繪製柴犬與小比
+      shibas.forEach(s => drawShiba(s.x, s.y, s.facing));
+      drawSomo(player.x, player.y, player.facing, player.isMoving);
+    }
+
+    // --- 主角小比（完全去除黑底與黑色外框） ---
+    function drawSomo(x, y, facing, isMoving) {
+      ctx.save();
+      const hop = isMoving ? Math.abs(Math.sin(gameTime * 10)) * 5 : 0;
+      ctx.translate(x + 16, y + 16 - hop);
+      if (facing === 'left') ctx.scale(-1, 1);
+
+      // 1. 圓潤灰背與頭部 (Grey Body & Head - 無黑底)
+      ctx.fillStyle = '#7a8288';
+      ctx.fillRect(-10, -5, 18, 16);  // 圓潤屁股與背部
+      ctx.fillRect(-1, -11, 11, 10);  // 灰臉部與頭頂
+
+      // 2. 耳朵 (Ears)
+      ctx.fillStyle = '#7a8288';
+      ctx.fillRect(-1, -18, 4, 8);    // 左耳
+      ctx.fillRect(4, -18, 4, 8);     // 右耳
+      ctx.fillStyle = '#e8a598';
+      ctx.fillRect(1, -16, 2, 5);     // 耳內粉紅
+
+      // 3. 極其顯眼蓬鬆純白圍脖 (White Ruff)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-3, -4, 13, 11);
+      ctx.fillRect(-5, -1, 15, 7);
+
+      // 4. 前肢與後腿 (White Front Legs & Grey Back Legs)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(2, 6, 4, 6);       // 白前腳
+      ctx.fillRect(-6, 8, 5, 3);      // 白腳掌
+      ctx.fillStyle = '#7a8288';
+      ctx.fillRect(-8, 3, 6, 6);      // 灰後腿
+
+      // 5. 尾巴 (White Bunny Tail)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-12, 1, 4, 5);
+
+      // 6. 明亮大黑眼點綴白光與粉紅小鼻 (Eyes & Nose)
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(5, -9, 3, 4);     // 大黑眼
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(6, -9, 1, 1);     // 眼睛白光
+      ctx.fillStyle = '#e8a598';
+      ctx.fillRect(9, -6, 2, 2);     // 粉小鼻
+
+      ctx.restore();
+    }
+
+    // 繪製巡邏赤柴 (Shiba Inu)
+    function drawShiba(x, y, facing) {
+      ctx.save();
+      ctx.translate(x + 16, y + 16);
+      if (facing === 'left') ctx.scale(-1, 1);
+
+      ctx.fillStyle = '#e07a5f';
+      ctx.fillRect(-10, -7, 20, 14);
+      ctx.fillRect(2, -12, 9, 10);
+
+      ctx.fillStyle = '#f4f1de';
+      ctx.fillRect(-4, 2, 10, 5);
+      ctx.fillRect(5, -7, 6, 5);
+      ctx.fillStyle = '#2b2d42';
+      ctx.fillRect(4, -11, 2, 2); // 黑色眉毛
+      ctx.fillRect(6, -9, 2, 2);  // 眼睛
+
+      ctx.fillStyle = '#e07a5f';
+      ctx.fillRect(-12, -10, 4, 6); // 捲尾巴
+
+      ctx.restore();
+    }
+
+    // --- 遊戲邏輯與碰撞判斷 ---
+    function update() {
+      if (!isRunning || isPaused) return;
+
+      let dx = 0, dy = 0;
+      if (keys.ArrowUp || keys.w || keys.W) dy = -1;
+      else if (keys.ArrowDown || keys.s || keys.S) dy = 1;
+      else if (keys.ArrowLeft || keys.a || keys.A) dx = -1;
+      else if (keys.ArrowRight || keys.d || keys.D) dx = 1;
+
+      if (dx !== 0) player.facing = dx > 0 ? 'right' : 'left';
+      player.isMoving = (dx !== 0 || dy !== 0);
+
+      const nextX = player.x + dx * player.speed;
+      const nextY = player.y + dy * player.speed;
+
+      const b = 6;
+      const tL = Math.floor((nextX + b) / TILE);
+      const tR = Math.floor((nextX + TILE - b) / TILE);
+      const tT = Math.floor((nextY + b) / TILE);
+      const tB = Math.floor((nextY + TILE - b) / TILE);
+
+      if (MAP[tT] && MAP[tT][tL] === 0 && MAP[tT][tR] === 0 && MAP[tB][tL] === 0 && MAP[tB][tR] === 0) {
+        player.x = nextX;
+        player.y = nextY;
+      }
+
+      shibas.forEach(s => s.update());
+
+      // 碰到柴犬
+      shibas.forEach(s => {
+        const dist = Math.hypot((player.x + 16) - (s.x + 16), (player.y + 16) - (s.y + 16));
+        if (dist < 18) {
+          endGame(false);
+        }
+      });
+
+      // 解鎖記憶點
+      const centerGx = Math.floor((player.x + 16) / TILE);
+      const centerGy = Math.floor((player.y + 16) / TILE);
+
+      MEMORIES.forEach(m => {
+        if (!m.unlocked && m.gx === centerGx && m.gy === centerGy) {
+          m.unlocked = true;
+          unlockedCount++;
+          document.getElementById('unlocked-count').innerText = unlockedCount;
+          audio.playUnlock();
+          showMemory(m);
+
+          if (unlockedCount >= MEMORIES.length) {
+            setTimeout(() => endGame(true), 400);
+          }
+        }
+      });
+    }
+
+    // 展示解鎖 Modal
+    function showMemory(m) {
+      isPaused = true;
+      const modal = document.getElementById('memory-modal');
+      const title = document.getElementById('memory-title');
+      const text = document.getElementById('memory-text');
+      const container = document.getElementById('memory-media-container');
+
+      title.innerText = m.title;
+      text.innerText = m.text;
+      container.innerHTML = '';
+
+      if (m.type === 'p') {
+        const img = document.createElement('img');
+        img.src = m.src;
+        img.alt = m.title;
+        img.onerror = () => { container.innerHTML = `<div style="padding:20px;color:#aaa;">[照片載入中: ${m.src}]</div>`; };
+        container.appendChild(img);
+      } else {
+        const video = document.createElement('video');
+        video.src = m.src;
+        video.controls = true;
+        video.autoplay = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.onerror = () => { container.innerHTML = `<div style="padding:20px;color:#aaa;">[影片載入中: ${m.src}]</div>`; };
+        container.appendChild(video);
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    document.getElementById('btn-close-memory').addEventListener('click', () => {
+      document.getElementById('memory-modal').classList.add('hidden');
+      isPaused = false;
+    });
+
+    function endGame(isWin) {
+      isRunning = false;
+      const modal = document.getElementById('end-modal');
+      const title = document.getElementById('end-title');
+      const desc = document.getElementById('end-desc');
+
+      if (isWin) {
+        audio.playWin();
+        title.innerText = "🎉 挑戰成功！";
+        title.style.color = "#ffd166";
+        desc.innerText = "太棒了！小比順利收集齊全所有的溫馨記憶！✨";
+      } else {
+        audio.playFail();
+        title.innerText = "挑戰失敗 🐾";
+        title.style.color = "#ef476f";
+        desc.innerText = "不小心被柴犬發現啦！再試一次吧！";
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function startGame() {
+      audio.init();
+      resizeCanvas();
+
+      unlockedCount = 0;
+      document.getElementById('unlocked-count').innerText = 0;
+      MEMORIES.forEach(m => m.unlocked = false);
+
+      player.x = 3 * TILE;
+      player.y = 1 * TILE;
+
+      shibas[0] = new Shiba(9, 7);
+      shibas[1] = new Shiba(15, 11);
+
+      document.getElementById('start-modal').classList.add('hidden');
+      document.getElementById('end-modal').classList.add('hidden');
+      document.getElementById('memory-modal').classList.add('hidden');
+
+      isPaused = false;
+      isRunning = true;
+    }
+
+    document.getElementById('btn-start').onclick = function(e) {
+      e.preventDefault();
+      startGame();
+    };
+
+    document.getElementById('btn-restart').onclick = function(e) {
+      e.preventDefault();
+      startGame();
+    };
+
+    function loop() {
+      update();
+      render();
+      requestAnimationFrame(loop);
+    }
+
+    resizeCanvas();
+    loop();
+  </script>
+</body>
+</html>
