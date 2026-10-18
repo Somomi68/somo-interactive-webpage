@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>灰白小兔互動網站 Somo’s Interactive web page</title>
+    <title>小比的記憶花園：Somo’s Memory Garden</title>
     <style>
         * {
             box-sizing: border-box;
@@ -35,7 +35,7 @@
             display: block;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            box-shadow: 0 0 25px rgba(0,0,0,0.85);
         }
 
         /* 抬頭顯示進度 HUD */
@@ -43,14 +43,14 @@
             position: absolute;
             top: 15px;
             left: 15px;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.95);
             border: 3px solid #333;
             border-radius: 12px;
             padding: 8px 16px;
             font-size: 16px;
             font-weight: bold;
             color: #2c3e50;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             pointer-events: none;
             z-index: 10;
         }
@@ -69,7 +69,7 @@
             position: absolute;
             width: 42px;
             height: 42px;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             border: 3px solid #3c3c3c;
             border-radius: 10px;
             display: flex;
@@ -100,8 +100,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -122,27 +122,16 @@
             border-radius: 20px;
             width: 90%;
             max-width: 480px;
-            padding: 24px;
+            padding: 26px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             max-height: 90vh;
             overflow-y: auto;
         }
 
         .card h1 {
-            font-size: 20px;
+            font-size: 22px;
             color: #5a3e2b;
-            margin-bottom: 8px;
-        }
-
-        .card .date {
-            font-size: 15px;
-            font-weight: bold;
-            color: #d9534f;
-            background: #ffe8e8;
-            padding: 4px 12px;
-            border-radius: 12px;
-            display: inline-block;
             margin-bottom: 12px;
         }
 
@@ -156,11 +145,11 @@
 
         .rules-box {
             background: #f0e6d2;
-            border-radius: 10px;
-            padding: 10px 14px;
+            border-radius: 12px;
+            padding: 12px 14px;
             font-size: 13px;
             color: #333;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             text-align: left;
         }
 
@@ -169,7 +158,7 @@
             color: #fff;
             border: 3px solid #c88000;
             border-radius: 12px;
-            padding: 10px 28px;
+            padding: 10px 30px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
@@ -254,8 +243,7 @@
     <!-- 開場畫面 -->
     <div id="intro-modal" class="overlay">
         <div class="card">
-            <h1>灰白小兔互動網站<br>Somo’s Interactive web page</h1>
-            <div class="date">2015.06.08 - 2025.12.27</div>
+            <h1>小比的記憶花園<br>Somo’s Memory Garden</h1>
             <p>
                 歡迎來到小比的互動網站！<br>
                 小比是一隻擁有灰白柔順毛毛、明亮大眼、美麗長睫毛與滿滿個性的聰明好兔寶。<br>
@@ -266,7 +254,7 @@
                 <b>🎮 遊戲規則與操作：</b><br>
                 • 控制方式：點擊右下角 4 方向鍵（或鍵盤 ↑↓←→ / WASD）<br>
                 • 任務目標：漫遊迷宮尋找 10 個記憶物件，自動觸碰解鎖照片！<br>
-                • 危險警告：避開 2 隻全地圖漫遊的柴犬，若被碰到則挑戰失敗。
+                • 危險警告：避開 2 隻全地圖巡邏的柴犬，若被碰到則挑戰失敗。
             </div>
             <button class="btn-start" onclick="startGame()">開始！</button>
         </div>
@@ -408,10 +396,9 @@ class Bunny {
     constructor() {
         this.x = 1.5 * TILE_SIZE;
         this.y = 1.5 * TILE_SIZE;
-        this.speed = 3.2; // 60 FPS 平滑連貫位移
+        this.speed = 3.2; // 60 FPS 平滑位移
         this.vx = 0;
         this.vy = 0;
-        this.dir = "down";
         this.hopFrame = 0;
     }
     update() {
@@ -419,7 +406,6 @@ class Bunny {
             let nextX = this.x + this.vx * this.speed;
             let nextY = this.y + this.vy * this.speed;
 
-            // 碰撞檢測 (邊界帶 padding)
             if (!checkWallCollision(nextX, this.y, 14)) this.x = nextX;
             if (!checkWallCollision(this.x, nextY, 14)) this.y = nextY;
 
@@ -442,46 +428,41 @@ class Bunny {
         ctx.ellipse(0, 14 - hopY*0.5, 12, 6, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // 黑色輪廓與灰身 (四腳著地姿勢)
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#1a1a1a";
 
-        // 後身 (灰色)
+        // 後身 (質感灰)
         ctx.fillStyle = "#8a8a8a";
         ctx.beginPath();
         ctx.ellipse(-4, 2, 14, 11, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fill(); ctx.stroke();
 
         // 灰頭
         ctx.beginPath();
         ctx.ellipse(8, -4, 9, 8, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fill(); ctx.stroke();
 
-        // 四肢與腹部延伸 (純白)
+        // 四肢與腹部 (純白)
         ctx.fillStyle = "#ffffff";
         ctx.beginPath();
-        ctx.ellipse(-2, 8, 12, 5, 0, 0, Math.PI * 2); // 腹部
+        ctx.ellipse(-2, 8, 12, 5, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.ellipse(10, 8, 4, 5, 0, 0, Math.PI * 2);  // 前腳
-        ctx.ellipse(-8, 9, 5, 5, 0, 0, Math.PI * 2);  // 後腳
+        ctx.ellipse(10, 8, 4, 5, 0, 0, Math.PI * 2);
+        ctx.ellipse(-8, 9, 5, 5, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // 蓬鬆純白圍脖 (White Ruff)
         ctx.fillStyle = "#ffffff";
         ctx.beginPath();
-        ctx.ellipse(4, 0, 7, 9, -0.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.ellipse(4, 0, 8, 10, -0.2, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
 
         // 豎立長耳朵 (灰底粉心)
         ctx.fillStyle = "#8a8a8a";
         ctx.beginPath();
         ctx.ellipse(4, -16, 3, 9, -0.1, 0, Math.PI * 2);
         ctx.ellipse(9, -15, 3, 9, 0.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fill(); ctx.stroke();
 
         ctx.fillStyle = "#ffb6c1";
         ctx.beginPath();
@@ -489,7 +470,7 @@ class Bunny {
         ctx.ellipse(9, -15, 1.5, 6, 0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        // 眼睛 & 嘴巴
+        // 眼睛
         ctx.fillStyle = "#000000";
         ctx.beginPath();
         ctx.arc(11, -6, 2, 0, Math.PI * 2);
@@ -499,18 +480,18 @@ class Bunny {
         ctx.fillStyle = "#ffffff";
         ctx.beginPath();
         ctx.arc(-18, 0, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fill(); ctx.stroke();
 
         ctx.restore();
     }
 }
 
 class Shiba {
-    constructor(tileX, tileY) {
+    constructor(tileX, tileY, routeBias) {
         this.x = (tileX + 0.5) * TILE_SIZE;
         this.y = (tileY + 0.5) * TILE_SIZE;
-        this.speed = 1.8; // 移動速度略低於小比
+        this.speed = 1.8;
+        this.routeBias = routeBias; // 不同偏好的巡邏 AI (順時針/逆時針/縱向優先)
         this.dirs = [ {x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1} ];
         this.currentDir = this.dirs[Math.floor(Math.random()*4)];
         this.walkFrame = 0;
@@ -519,15 +500,20 @@ class Shiba {
         let nextX = this.x + this.currentDir.x * this.speed;
         let nextY = this.y + this.currentDir.y * this.speed;
 
-        // 當遇到牆壁或到達路口時進行智慧隨機轉彎
         let tileX = Math.floor(this.x / TILE_SIZE);
         let tileY = Math.floor(this.y / TILE_SIZE);
         let centerDist = Math.hypot(this.x - (tileX + 0.5)*TILE_SIZE, this.y - (tileY + 0.5)*TILE_SIZE);
 
-        if (checkWallCollision(nextX, nextY, 14) || (centerDist < 2 && Math.random() < 0.25)) {
-            let validDirs = this.dirs.filter(d => !checkWallCollision(this.x + d.x * TILE_SIZE * 0.6, this.y + d.y * TILE_SIZE * 0.6, 14));
+        // 到達網格交會點時重新演算全地圖路線，確保每條走道都能巡邏到
+        if (checkWallCollision(nextX, nextY, 14) || (centerDist < 2 && Math.random() < 0.35)) {
+            let validDirs = this.dirs.filter(d => !checkWallCollision(this.x + d.x * TILE_SIZE * 0.7, this.y + d.y * TILE_SIZE * 0.7, 14));
             if (validDirs.length > 0) {
-                this.currentDir = validDirs[Math.floor(Math.random() * validDirs.length)];
+                // 依據 routeBias 選擇不同轉彎優先權，確保兩隻路線分開且遍佈全地圖
+                if (this.routeBias === "CW") {
+                    this.currentDir = validDirs[Math.floor(Math.random() * validDirs.length)];
+                } else {
+                    this.currentDir = validDirs[validDirs.length - 1];
+                }
             } else {
                 this.currentDir.x *= -1;
                 this.currentDir.y *= -1;
@@ -543,7 +529,6 @@ class Shiba {
         ctx.save();
         ctx.translate(this.x, this.y);
 
-        // 踏步動畫
         let stepY = Math.sin(this.walkFrame) * 2;
 
         // 陰影
@@ -559,14 +544,12 @@ class Shiba {
         ctx.fillStyle = "#e67e22";
         ctx.beginPath();
         ctx.ellipse(0, 2 + stepY, 14, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fill(); ctx.stroke();
 
         // 赤柴頭部
         ctx.beginPath();
         ctx.ellipse(10, -5 + stepY, 8, 8, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fill(); ctx.stroke();
 
         // 白毛嘴罩與胸前
         ctx.fillStyle = "#fef5e7";
@@ -618,9 +601,9 @@ function checkWallCollision(px, py, radius) {
 }
 
 const bunny = new Bunny();
-const shibas = [new Shiba(8, 6), new Shiba(13, 8)];
+const shibas = [new Shiba(8, 6, "CW"), new Shiba(13, 10, "CCW")];
 
-/* ==================== 繪圖渲染核心 (全場景質感手繪像素) ==================== */
+/* ==================== 繪圖渲染核心 (精緻手繪像素畫風) ==================== */
 function drawScene() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -641,15 +624,13 @@ function drawScene() {
                 // 海邊沙灘與湛藍海浪區 (佔 10%)
                 ctx.fillStyle = "#f4d03f";
                 ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
-                // 藍水波
                 ctx.fillStyle = "#3498db";
                 ctx.fillRect(x + 16, y, TILE_SIZE - 16, TILE_SIZE);
-                // 動態白浪花
                 ctx.fillStyle = "#ffffff";
                 let waveOffset = Math.sin(Date.now() * 0.005 + r) * 4;
                 ctx.fillRect(x + 12 + waveOffset, y, 4, TILE_SIZE);
             } else {
-                // 房間區 (木紋地板 佔 60%)
+                // 房間區 (淡木紋地板 佔 60%)
                 ctx.fillStyle = "#d5a6bd";
                 ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
                 ctx.strokeStyle = "#c282a5";
@@ -659,7 +640,7 @@ function drawScene() {
         }
     }
 
-    // 2. 帶黑色細輪廓線 (Black Outline) 的圓潤深綠草叢牆壁
+    // 2. 帶黑色細輪廓線的圓潤深綠草叢牆壁
     for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
             if (MAP_GRID[r][c] === 1) {
@@ -675,7 +656,6 @@ function drawScene() {
                 ctx.strokeStyle = "#1a1a1a";
                 ctx.stroke();
 
-                // 質感深淺葉片細點
                 ctx.fillStyle = "#1e8449";
                 ctx.beginPath();
                 ctx.arc(x + 16, y + 16, 6, 0, Math.PI * 2);
@@ -685,7 +665,7 @@ function drawScene() {
         }
     }
 
-    // 3. 具象化 10 個核心觸及物品 (擺放於道路上)
+    // 3. 具象化 10 個核心觸及物品 (擺放於道路上，帶輪廓線與色彩光影)
     MEMORIES.forEach(m => {
         let mx = (m.x + 0.5) * TILE_SIZE;
         let my = (m.y + 0.5) * TILE_SIZE;
@@ -694,10 +674,9 @@ function drawScene() {
         ctx.save();
         ctx.translate(mx, my);
 
-        // 未解鎖發光特效
         if (!isUnlocked) {
             let glow = Math.sin(Date.now() * 0.008) * 4;
-            ctx.fillStyle = "rgba(255, 230, 0, 0.3)";
+            ctx.fillStyle = "rgba(255, 230, 0, 0.35)";
             ctx.beginPath();
             ctx.arc(0, 0, 18 + glow, 0, Math.PI * 2);
             ctx.fill();
@@ -706,72 +685,48 @@ function drawScene() {
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#1a1a1a";
 
-        // 針對 10 個物品進行個別具象繪製
         switch(m.id) {
-            case 1: // 大理石板
-                ctx.fillStyle = "#bdc3c7";
-                ctx.fillRect(-16, -10, 32, 20);
-                ctx.strokeRect(-16, -10, 32, 20);
-                ctx.fillStyle = "#7f8c8d";
-                ctx.fillRect(-8, -4, 16, 2);
+            case 1: // 大理石板 (帶紋理)
+                ctx.fillStyle = "#bdc3c7"; ctx.fillRect(-16, -10, 32, 20); ctx.strokeRect(-16, -10, 32, 20);
+                ctx.fillStyle = "#7f8c8d"; ctx.fillRect(-8, -4, 16, 2); ctx.fillRect(2, 2, 8, 2);
                 break;
-            case 2: // 講義書本
-                ctx.fillStyle = "#3498db";
-                ctx.fillRect(-12, -14, 24, 28);
-                ctx.strokeRect(-12, -14, 24, 28);
-                ctx.fillStyle = "#fff";
-                ctx.fillRect(-8, -10, 16, 20);
+            case 2: // 講義書本 (帶書脊)
+                ctx.fillStyle = "#3498db"; ctx.fillRect(-12, -14, 24, 28); ctx.strokeRect(-12, -14, 24, 28);
+                ctx.fillStyle = "#fff"; ctx.fillRect(-8, -10, 16, 20);
+                ctx.fillStyle = "#333"; ctx.fillRect(-5, -6, 10, 2); ctx.fillRect(-5, -1, 10, 2);
                 break;
-            case 3: // 木椅子
-                ctx.fillStyle = "#a0522d";
-                ctx.fillRect(-12, -12, 24, 8);
-                ctx.fillRect(-10, -4, 4, 16);
-                ctx.fillRect(6, -4, 4, 16);
-                ctx.strokeRect(-12, -12, 24, 8);
+            case 3: // 木椅子 (帶椅背)
+                ctx.fillStyle = "#a0522d"; ctx.fillRect(-12, -14, 24, 8); ctx.fillRect(-10, -6, 20, 8);
+                ctx.fillRect(-10, 2, 4, 12); ctx.fillRect(6, 2, 4, 12); ctx.strokeRect(-12, -14, 24, 24);
                 break;
-            case 4: // 櫻桃蔬果箱
-                ctx.fillStyle = "#cd853f";
-                ctx.fillRect(-14, -10, 28, 20);
-                ctx.strokeRect(-14, -10, 28, 20);
-                ctx.fillStyle = "#e74c3c"; // 櫻桃
-                ctx.beginPath(); ctx.arc(-4, -2, 4, 0, Math.PI*2); ctx.arc(4, 2, 4, 0, Math.PI*2); ctx.fill();
+            case 4: // 櫻桃蔬果箱 (帶立體櫻桃)
+                ctx.fillStyle = "#cd853f"; ctx.fillRect(-14, -10, 28, 20); ctx.strokeRect(-14, -10, 28, 20);
+                ctx.fillStyle = "#e74c3c"; ctx.beginPath(); ctx.arc(-4, -2, 4, 0, Math.PI*2); ctx.arc(4, 2, 4, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = "#27ae60"; ctx.beginPath(); ctx.moveTo(-4,-6); ctx.lineTo(0,-10); ctx.lineTo(4,-6); ctx.stroke();
                 break;
-            case 5: // 一綑綠牧草
-                ctx.fillStyle = "#2ecc71";
-                ctx.beginPath(); ctx.ellipse(0, 0, 16, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = "#f1c40f"; // 綁繩
-                ctx.fillRect(-3, -10, 6, 20);
+            case 5: // 一綑綠牧草 (帶綁繩)
+                ctx.fillStyle = "#2ecc71"; ctx.beginPath(); ctx.ellipse(0, 0, 16, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "#f1c40f"; ctx.fillRect(-3, -10, 6, 20); ctx.strokeRect(-3, -10, 6, 20);
                 break;
-            case 6: // 花色棉被
-                ctx.fillStyle = "#ff7675";
-                ctx.fillRect(-16, -12, 32, 24);
-                ctx.strokeRect(-16, -12, 32, 24);
-                ctx.fillStyle = "#fdcb6e";
-                ctx.fillRect(-8, -6, 16, 12);
+            case 6: // 花色棉被 (帶摺痕)
+                ctx.fillStyle = "#ff7675"; ctx.fillRect(-16, -12, 32, 24); ctx.strokeRect(-16, -12, 32, 24);
+                ctx.fillStyle = "#fdcb6e"; ctx.fillRect(-8, -6, 16, 12);
                 break;
             case 7: // 綠色角落便盆
-                ctx.fillStyle = "#27ae60";
-                ctx.beginPath();
-                ctx.moveTo(-14, -14); ctx.lineTo(14, -14); ctx.lineTo(14, 14); ctx.closePath();
-                ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "#27ae60"; ctx.beginPath(); ctx.moveTo(-14, -14); ctx.lineTo(14, -14); ctx.lineTo(14, 14); ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "#2ecc71"; ctx.fillRect(-8, -8, 12, 12);
                 break;
-            case 8: // 沙灘動態海浪
-                ctx.fillStyle = "#00cec9";
-                ctx.beginPath(); ctx.arc(-6, 0, 8, 0, Math.PI*2); ctx.arc(6, 0, 8, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "#fff";
-                ctx.fillRect(-10, -2, 20, 4);
+            case 8: // 沙灘雙層動態海浪
+                ctx.fillStyle = "#00cec9"; ctx.beginPath(); ctx.arc(-6, 0, 8, 0, Math.PI*2); ctx.arc(6, 0, 8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillRect(-10, -2, 20, 4);
                 break;
-            case 9: // 迷你纜車
-                ctx.fillStyle = "#e74c3c";
-                ctx.fillRect(-12, -10, 24, 20);
-                ctx.strokeRect(-12, -10, 24, 20);
-                ctx.fillStyle = "#81ecec"; ctx.fillRect(-8, -6, 16, 8); // 窗戶
+            case 9: // 迷你纜車 (帶吊纜)
+                ctx.fillStyle = "#e74c3c"; ctx.fillRect(-12, -8, 24, 18); ctx.strokeRect(-12, -8, 24, 18);
+                ctx.fillStyle = "#81ecec"; ctx.fillRect(-8, -4, 16, 6);
+                ctx.strokeStyle = "#7f8c8d"; ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(0, -16); ctx.stroke();
                 break;
             case 10: // 特別草圖樣
-                ctx.fillStyle = "#00b894";
-                ctx.beginPath();
-                ctx.arc(-6, 4, 6, 0, Math.PI*2); ctx.arc(6, 4, 6, 0, Math.PI*2); ctx.arc(0, -4, 8, 0, Math.PI*2);
-                ctx.fill(); ctx.stroke();
+                ctx.fillStyle = "#00b894"; ctx.beginPath(); ctx.arc(-6, 4, 6, 0, Math.PI*2); ctx.arc(6, 4, 6, 0, Math.PI*2); ctx.arc(0, -4, 8, 0, Math.PI*2); ctx.fill(); ctx.stroke();
                 break;
         }
 
@@ -789,14 +744,14 @@ function gameLoop() {
         bunny.update();
         shibas.forEach(s => s.update());
 
-        // 1. 檢測是否被柴犬碰到 (距離 < 22 像素)
+        // 檢測是否被柴犬碰到
         shibas.forEach(s => {
             if (Math.hypot(bunny.x - s.x, bunny.y - s.y) < 22) {
                 triggerFail();
             }
         });
 
-        // 2. 檢測自動觸及記憶物件 (距離 < 26 像素)
+        // 檢測自動觸及記憶物件
         MEMORIES.forEach(m => {
             let mx = (m.x + 0.5) * TILE_SIZE;
             let my = (m.y + 0.5) * TILE_SIZE;
@@ -819,7 +774,6 @@ function triggerMemory(mem) {
     document.getElementById("score").innerText = unlockedCount;
     audio.playPickup();
 
-    // 顯示 RPG 打字機對話框
     const box = document.getElementById("dialogue-box");
     const textEl = document.getElementById("dialogue-text");
     box.style.display = "block";
@@ -848,7 +802,6 @@ function showPolaroid(mem) {
     caption.innerText = mem.dialog;
     container.innerHTML = "";
 
-    // 自動加載 Photo/Video (支援 .jpg / .png 備用)
     if (mem.type === "photo") {
         const img = document.createElement("img");
         img.className = "polaroid-media";
@@ -919,7 +872,6 @@ function updateVelocity() {
     if (keys["ArrowDown"] || keys["s"] || keys["S"]) bunny.vy = 1;
 }
 
-// 右下角 4 方向鍵觸控綁定
 function bindTouchBtn(id, vx, vy) {
     const btn = document.getElementById(id);
     const start = (e) => { e.preventDefault(); if(gameState==="PLAYING"){ bunny.vx = vx; bunny.vy = vy; } };
@@ -948,17 +900,9 @@ function restartGame() {
     unlockedSet.clear();
     document.getElementById("score").innerText = "0";
 
-    // 重置位置
     bunny.x = 1.5 * TILE_SIZE;
     bunny.y = 1.5 * TILE_SIZE;
     shibas[0].x = 8.5 * TILE_SIZE; shibas[0].y = 6.5 * TILE_SIZE;
     shibas[1].x = 13.5 * TILE_SIZE; shibas[1].y = 8.5 * TILE_SIZE;
 
     gameState = "PLAYING";
-}
-
-// 啟動主繪圖迴圈
-requestAnimationFrame(gameLoop);
-</script>
-</body>
-</html>
