@@ -55,6 +55,27 @@
       z-index: 10;
     }
 
+    /* 右上角音樂開關按鈕 */
+    #music-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(240, 240, 240, 0.9);
+      border: 2px solid #222222;
+      border-radius: 20px;
+      padding: 8px 16px;
+      color: #111111;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 20;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: background 0.2s, border-color 0.2s;
+    }
+    #music-btn:active {
+      transform: scale(0.96);
+    }
+
     /* 手機/電腦實體按鈕 UI */
     #controls {
       position: absolute;
@@ -91,15 +112,15 @@
     #btn-down { grid-column: 2; grid-row: 2; }
     #btn-right { grid-column: 3; grid-row: 2; }
 
-    /* Modal 彈窗樣式 */
+    /* Modal 彈窗共用機制 (40% 透明顯色度) */
     .modal-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(8, 12, 10, 0.92);
-      backdrop-filter: blur(5px);
+      background: rgba(235, 238, 240, 0.4);
+      backdrop-filter: blur(4px);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -115,80 +136,130 @@
       z-index: -10 !important;
       display: none !important;
     }
+
+    /* 灰白風格開場 Modal 卡片設計 */
     .modal-card {
-      background: #1e2d23;
-      border: 3px solid #528a62;
+      position: relative;
+      background: #ffffff;
+      border: 3px solid #222222;
       border-radius: 16px;
-      padding: 24px;
+      padding: 26px;
       max-width: 500px;
       width: 92%;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #f0f7f4;
+      color: #222222;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
       overflow-y: auto;
     }
+
+    /* 上方黑框上的小比動態跑動容器 */
+    .bunny-runner-track {
+      position: absolute;
+      top: -38px;
+      left: 20px;
+      right: 20px;
+      height: 38px;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bunny-sprite {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      animation: bunnyRun 7s ease-in-out infinite;
+      image-rendering: pixelated;
+    }
+
+    @keyframes bunnyRun {
+      0% {
+        left: 0%;
+        transform: scaleX(1);
+      }
+      48% {
+        left: calc(100% - 38px);
+        transform: scaleX(1);
+      }
+      50% {
+        left: calc(100% - 38px);
+        transform: scaleX(-1);
+      }
+      98% {
+        left: 0%;
+        transform: scaleX(-1);
+      }
+      100% {
+        left: 0%;
+        transform: scaleX(1);
+      }
+    }
+
     .modal-card h1 {
-      font-size: 20px;
-      color: #ffd166;
+      font-size: 21px;
+      color: #111111;
       margin-bottom: 12px;
+      letter-spacing: 1px;
+      font-weight: 800;
     }
     .modal-card p {
       font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 12px;
-      color: #d0e0d5;
+      margin-bottom: 14px;
+      color: #444444;
       text-align: left;
       width: 100%;
     }
     .rules-box {
-      background: rgba(15, 23, 18, 0.6);
-      border: 1px solid #36543e;
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
+      background: #f4f5f7;
+      border: 1.5px solid #d0d5dd;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
       width: 100%;
       text-align: left;
       font-size: 13px;
-      color: #c2d6c8;
+      color: #333333;
       line-height: 1.6;
     }
     .rules-box h2 {
       font-size: 14px;
-      color: #ffd166;
+      color: #111111;
       margin-bottom: 6px;
+      font-weight: bold;
     }
     .modal-card .btn-action {
-      background: #ffd166;
-      color: #111a14;
+      background: #222222;
+      color: #ffffff;
       border: none;
-      padding: 11px 28px;
+      padding: 12px 30px;
       font-size: 15px;
       font-weight: bold;
-      border-radius: 20px;
+      border-radius: 22px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #c79e32;
-      transition: transform 0.1s;
+      box-shadow: 0 4px 0 #555555;
+      transition: transform 0.1s, background 0.2s;
       flex-shrink: 0;
     }
     .modal-card .btn-action:active {
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #c79e32;
+      box-shadow: 0 2px 0 #555555;
+      background: #333333;
     }
     
+    /* 解鎖照片/影片對話框 */
     #memory-media-container {
       width: 100%;
       max-height: 55vh;
       margin: 10px 0;
       border-radius: 8px;
-      background: #0f1712;
+      background: #f0f0f0;
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid #36543e;
+      border: 1px solid #cccccc;
       overflow: hidden;
     }
     #memory-media-container img, #memory-media-container video {
@@ -207,6 +278,9 @@
     <!-- HUD 進度 -->
     <div id="hud">已解鎖記憶：<span id="unlocked-count">0</span> / 10</div>
 
+    <!-- 右上角音樂開關鈕 -->
+    <button id="music-btn">🎵 背景音樂：開啟</button>
+
     <!-- 實體方向鍵 -->
     <div id="controls">
       <div class="btn-key" id="btn-up">▲</div>
@@ -218,6 +292,11 @@
     <!-- 1. 開場簡介與規則 Modal -->
     <div id="start-modal" class="modal-overlay">
       <div class="modal-card">
+        <!-- 頂端黑框上方跑動的小比 -->
+        <div class="bunny-runner-track">
+          <canvas id="bunnyCanvas" class="bunny-sprite" width="38" height="38"></canvas>
+        </div>
+
         <h1>小比的記憶花園<br>Somo’s Memory Garden</h1>
         <p>小比是一隻擁有灰白柔順毛毛、明亮大眼的聰明好兔寶，請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!</p>
         
@@ -236,9 +315,9 @@
     <!-- 2. RPG 記憶對話 Modal -->
     <div id="memory-modal" class="modal-overlay hidden">
       <div class="modal-card">
-        <h1 id="memory-title">解鎖記憶！</h1>
+        <h1 id="memory-title" style="color: #111111;">解鎖記憶！</h1>
         <div id="memory-media-container"></div>
-        <p id="memory-text" style="text-align: center; font-size: 15px; font-weight: bold; color: #ffe6a7;"></p>
+        <p id="memory-text" style="text-align: center; font-size: 15px; font-weight: bold; color: #222222;"></p>
         <button id="btn-close-memory" class="btn-action">繼續探索</button>
       </div>
     </div>
@@ -247,16 +326,72 @@
     <div id="end-modal" class="modal-overlay hidden">
       <div class="modal-card">
         <h1 id="end-title">挑戰失敗</h1>
-        <p id="end-desc" style="text-align: center; margin-bottom: 20px;">被可愛的柴犬發現啦！</p>
+        <p id="end-desc" style="text-align: center; margin-bottom: 20px; color: #444444;">被可愛的柴犬發現啦！</p>
         <button id="btn-restart" class="btn-action">重新挑戰 🔄</button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- 音效引擎 (Web Audio API 安全容錯) ---
+    // --- 繪製黑框上方跑動的小比 ---
+    function renderRunnerBunny() {
+      const bCanvas = document.getElementById('bunnyCanvas');
+      if (!bCanvas) return;
+      const bCtx = bCanvas.getContext('2d');
+      bCtx.clearRect(0, 0, 38, 38);
+
+      bCtx.save();
+      bCtx.scale(1.18, 1.18);
+
+      bCtx.fillStyle = '#7a8288';
+      bCtx.fillRect(-2 + 12, -5 + 16, 18, 16);
+      bCtx.fillRect(-1 + 12, -11 + 16, 11, 10);
+
+      bCtx.fillStyle = '#7a8288';
+      bCtx.fillRect(-1 + 12, -18 + 16, 4, 8);
+      bCtx.fillRect(4 + 12, -18 + 16, 4, 8);
+      bCtx.fillStyle = '#e8a598';
+      bCtx.fillRect(1 + 12, -16 + 16, 2, 5);
+
+      bCtx.fillStyle = '#ffffff';
+      bCtx.fillRect(-3 + 12, -4 + 16, 13, 11);
+      bCtx.fillRect(-5 + 12, -1 + 16, 15, 7);
+
+      bCtx.fillStyle = '#ffffff';
+      bCtx.fillRect(2 + 12, 6 + 16, 4, 6);
+      bCtx.fillRect(-6 + 12, 8 + 16, 5, 3);
+      bCtx.fillStyle = '#7a8288';
+      bCtx.fillRect(-8 + 12, 3 + 16, 6, 6);
+
+      bCtx.fillStyle = '#ffffff';
+      bCtx.fillRect(-12 + 12, 1 + 16, 4, 5);
+
+      bCtx.fillStyle = '#111111';
+      bCtx.fillRect(5 + 12, -9 + 16, 3, 4);
+      bCtx.fillStyle = '#ffffff';
+      bCtx.fillRect(6 + 12, -9 + 16, 1, 1);
+      bCtx.fillStyle = '#e8a598';
+      bCtx.fillRect(9 + 12, -6 + 16, 2, 2);
+
+      bCtx.restore();
+    }
+    renderRunnerBunny();
+
+    // --- 音效與 BGM 系統 ---
     class SoundEngine {
-      constructor() { this.ctx = null; }
+      constructor() {
+        this.ctx = null;
+        this.isMuted = false;
+        this.bgmTimer = null;
+        this.bgmNoteIndex = 0;
+        this.melody = [
+          523.25, 659.25, 783.99, 1046.50, 783.99, 659.25,
+          587.33, 698.46, 880.00, 1174.66, 880.00, 698.46,
+          659.25, 783.99, 987.77, 1318.51, 987.77, 783.99,
+          523.25, 659.25, 783.99, 1046.50, 1046.50, 0
+        ];
+      }
+
       init() {
         try {
           if (!this.ctx) {
@@ -265,26 +400,66 @@
           if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume();
           }
+          this.startBGM();
         } catch(e) {}
       }
+
+      toggleMute() {
+        this.isMuted = !this.isMuted;
+        const btn = document.getElementById('music-btn');
+        if (this.isMuted) {
+          btn.innerText = '🎵 背景音樂：靜音';
+          btn.style.borderColor = '#999999';
+          btn.style.color = '#777777';
+        } else {
+          btn.innerText = '🎵 背景音樂：開啟';
+          btn.style.borderColor = '#222222';
+          btn.style.color = '#111111';
+          this.init();
+        }
+      }
+
+      startBGM() {
+        if (this.bgmTimer || this.isMuted) return;
+        this.bgmTimer = setInterval(() => {
+          if (this.isMuted || !this.ctx) return;
+          const freq = this.melody[this.bgmNoteIndex];
+          this.bgmNoteIndex = (this.bgmNoteIndex + 1) % this.melody.length;
+          if (freq > 0) {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.04, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.18);
+          }
+        }, 220);
+      }
+
       playUnlock() {
+        if (this.isMuted || !this.ctx) return;
         try {
-          if (!this.ctx) return;
           const now = this.ctx.currentTime;
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(523.25, now);
           osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.25);
-          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.setValueAtTime(0.18, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
           osc.connect(gain); gain.connect(this.ctx.destination);
           osc.start(now); osc.stop(now + 0.25);
         } catch(e) {}
       }
+
       playFail() {
+        if (this.isMuted || !this.ctx) return;
         try {
-          if (!this.ctx) return;
           const now = this.ctx.currentTime;
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
@@ -297,9 +472,10 @@
           osc.start(now); osc.stop(now + 0.35);
         } catch(e) {}
       }
+
       playWin() {
+        if (this.isMuted || !this.ctx) return;
         try {
-          if (!this.ctx) return;
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const now = this.ctx.currentTime + i * 0.1;
             const osc = this.ctx.createOscillator();
@@ -316,6 +492,10 @@
     }
     const audio = new SoundEngine();
 
+    document.getElementById('music-btn').onclick = function() {
+      audio.toggleMute();
+    };
+
     // --- 地圖與尺寸設定 ---
     const COLS = 19;
     const ROWS = 15;
@@ -323,7 +503,7 @@
     const GAME_W = COLS * TILE; // 608
     const GAME_H = ROWS * TILE; // 480
 
-    // 地圖陣列：0 可通行，1 樹叢牆壁
+    // 地圖陣列：將 x = 17 最右走道完全開通 (y = 10 處改為 0)
     const MAP = [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
@@ -335,7 +515,7 @@
       [1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,1],
       [1,0,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,0,1],
       [1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1],
-      [1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1],
+      [1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1], // x=17 處開通為 0
       [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
       [1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1],
       [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -343,12 +523,11 @@
     ];
 
     function getRegion(gx, gy) {
-      if (gx >= 13 && gy <= 5) return 'beach'; // 右上海邊區 (10%)
-      if (gy >= 11) return 'grass';             // 下方草地區 (30%)
-      return 'room';                            // 房間區 (60%)
+      if (gx >= 13 && gy <= 5) return 'beach'; // 右上海邊區
+      if (gy >= 11) return 'grass';             // 下方草地區
+      return 'room';                            // 房間區
     }
 
-    // 10 個核心對話點 (第 10 個已更新為 🏃‍♂️)
     const MEMORIES = [
       { id: 1, gx: 1, gy: 1, emoji: "🔳", title: "1. 大理石板 🔳", type: "p", src: "assets/p1.jpg", text: "天氣太熱啦！瞬間融化成一張冰涼的兔餅 🧊", unlocked: false },
       { id: 2, gx: 9, gy: 1, emoji: "📚", title: "2. 講義書本 📚", type: "p", src: "assets/p2.jpg", text: "小比陪考中：主人說讀完這章有點心吃 ₍ᐢ.ˬ.ᐢ₎", unlocked: false },
@@ -378,13 +557,11 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // 遊戲狀態
     let isRunning = false;
     let isPaused = false;
     let unlockedCount = 0;
     let gameTime = 0;
 
-    // 玩家小比
     const player = {
       gx: 3, gy: 1,
       x: 3 * TILE, y: 1 * TILE,
@@ -393,7 +570,6 @@
       isMoving: false
     };
 
-    // 巡邏柴犬 AI
     class Shiba {
       constructor(gx, gy) {
         this.gx = gx; this.gy = gy;
@@ -453,7 +629,6 @@
 
     const shibas = [new Shiba(9, 7), new Shiba(15, 11)];
 
-    // 輸入鍵盤與觸控監聽
     const keys = {};
     window.addEventListener('keydown', e => {
       audio.init();
@@ -481,7 +656,6 @@
       gameTime += 0.04;
       ctx.clearRect(0, 0, GAME_W, GAME_H);
 
-      // 1. 地磚與分區渲染
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
           const x = c * TILE;
@@ -489,7 +663,6 @@
           const reg = getRegion(c, r);
 
           if (MAP[r][c] === 1) {
-            // 深綠樹叢牆壁
             ctx.fillStyle = '#1c3d26';
             ctx.fillRect(x, y, TILE, TILE);
             ctx.fillStyle = '#2b5837';
@@ -528,12 +701,10 @@
         }
       }
 
-      // 2. 10 大核心 Emoji 觸碰物件繪製 (圖層調校：發光圈於底層，Emoji 於頂層)
       MEMORIES.forEach(m => {
         const mx = m.gx * TILE;
         const my = m.gy * TILE;
 
-        // 【底層】未解鎖黃色發光圈
         if (!m.unlocked) {
           ctx.fillStyle = 'rgba(255, 209, 102, 0.4)';
           ctx.beginPath();
@@ -541,65 +712,55 @@
           ctx.fill();
         }
 
-        // 【頂層】觸及物 Emoji
         ctx.font = '20px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(m.emoji, mx + 16, my + 17);
       });
 
-      // 3. 繪製柴犬與小比
       shibas.forEach(s => drawShiba(s.x, s.y, s.facing));
       drawSomo(player.x, player.y, player.facing, player.isMoving);
     }
 
-    // --- 主角小比（完全去除黑底與黑色外框） ---
     function drawSomo(x, y, facing, isMoving) {
       ctx.save();
       const hop = isMoving ? Math.abs(Math.sin(gameTime * 10)) * 5 : 0;
       ctx.translate(x + 16, y + 16 - hop);
       if (facing === 'left') ctx.scale(-1, 1);
 
-      // 1. 圓潤灰背與頭部 (Grey Body & Head - 無黑底)
       ctx.fillStyle = '#7a8288';
-      ctx.fillRect(-10, -5, 18, 16);  // 圓潤屁股與背部
-      ctx.fillRect(-1, -11, 11, 10);  // 灰臉部與頭頂
+      ctx.fillRect(-10, -5, 18, 16);
+      ctx.fillRect(-1, -11, 11, 10);
 
-      // 2. 耳朵 (Ears)
       ctx.fillStyle = '#7a8288';
-      ctx.fillRect(-1, -18, 4, 8);    // 左耳
-      ctx.fillRect(4, -18, 4, 8);     // 右耳
+      ctx.fillRect(-1, -18, 4, 8);
+      ctx.fillRect(4, -18, 4, 8);
       ctx.fillStyle = '#e8a598';
-      ctx.fillRect(1, -16, 2, 5);     // 耳內粉紅
+      ctx.fillRect(1, -16, 2, 5);
 
-      // 3. 極其顯眼蓬鬆純白圍脖 (White Ruff)
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(-3, -4, 13, 11);
       ctx.fillRect(-5, -1, 15, 7);
 
-      // 4. 前肢與後腿 (White Front Legs & Grey Back Legs)
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(2, 6, 4, 6);       // 白前腳
-      ctx.fillRect(-6, 8, 5, 3);      // 白腳掌
+      ctx.fillRect(2, 6, 4, 6);
+      ctx.fillRect(-6, 8, 5, 3);
       ctx.fillStyle = '#7a8288';
-      ctx.fillRect(-8, 3, 6, 6);      // 灰後腿
+      ctx.fillRect(-8, 3, 6, 6);
 
-      // 5. 尾巴 (White Bunny Tail)
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(-12, 1, 4, 5);
 
-      // 6. 明亮大黑眼點綴白光與粉紅小鼻 (Eyes & Nose)
       ctx.fillStyle = '#111111';
-      ctx.fillRect(5, -9, 3, 4);     // 大黑眼
+      ctx.fillRect(5, -9, 3, 4);
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(6, -9, 1, 1);     // 眼睛白光
+      ctx.fillRect(6, -9, 1, 1);
       ctx.fillStyle = '#e8a598';
-      ctx.fillRect(9, -6, 2, 2);     // 粉小鼻
+      ctx.fillRect(9, -6, 2, 2);
 
       ctx.restore();
     }
 
-    // 繪製巡邏赤柴 (Shiba Inu)
     function drawShiba(x, y, facing) {
       ctx.save();
       ctx.translate(x + 16, y + 16);
@@ -613,16 +774,16 @@
       ctx.fillRect(-4, 2, 10, 5);
       ctx.fillRect(5, -7, 6, 5);
       ctx.fillStyle = '#2b2d42';
-      ctx.fillRect(4, -11, 2, 2); // 黑色眉毛
-      ctx.fillRect(6, -9, 2, 2);  // 眼睛
+      ctx.fillRect(4, -11, 2, 2);
+      ctx.fillRect(6, -9, 2, 2);
 
       ctx.fillStyle = '#e07a5f';
-      ctx.fillRect(-12, -10, 4, 6); // 捲尾巴
+      ctx.fillRect(-12, -10, 4, 6);
 
       ctx.restore();
     }
 
-    // --- 遊戲邏輯與碰撞判斷 ---
+    // --- 遊戲邏輯與更新 ---
     function update() {
       if (!isRunning || isPaused) return;
 
@@ -651,7 +812,6 @@
 
       shibas.forEach(s => s.update());
 
-      // 碰到柴犬
       shibas.forEach(s => {
         const dist = Math.hypot((player.x + 16) - (s.x + 16), (player.y + 16) - (s.y + 16));
         if (dist < 18) {
@@ -659,7 +819,6 @@
         }
       });
 
-      // 解鎖記憶點
       const centerGx = Math.floor((player.x + 16) / TILE);
       const centerGy = Math.floor((player.y + 16) / TILE);
 
@@ -669,17 +828,15 @@
           unlockedCount++;
           document.getElementById('unlocked-count').innerText = unlockedCount;
           audio.playUnlock();
-          showMemory(m);
-
-          if (unlockedCount >= MEMORIES.length) {
-            setTimeout(() => endGame(true), 400);
-          }
+          
+          const isFinalMemory = (unlockedCount >= MEMORIES.length);
+          showMemory(m, isFinalMemory);
         }
       });
     }
 
     // 展示解鎖 Modal
-    function showMemory(m) {
+    function showMemory(m, isFinal) {
       isPaused = true;
       const modal = document.getElementById('memory-modal');
       const title = document.getElementById('memory-title');
@@ -696,13 +853,30 @@
         img.alt = m.title;
         img.onerror = () => { container.innerHTML = `<div style="padding:20px;color:#aaa;">[照片載入中: ${m.src}]</div>`; };
         container.appendChild(img);
+
+        if (isFinal) {
+          setTimeout(() => {
+            document.getElementById('memory-modal').classList.add('hidden');
+            endGame(true);
+          }, 3000);
+        }
       } else {
         const video = document.createElement('video');
         video.src = m.src;
         video.controls = true;
         video.autoplay = true;
-        video.loop = true;
         video.playsInline = true;
+
+        if (isFinal) {
+          video.loop = false;
+          video.onended = function() {
+            document.getElementById('memory-modal').classList.add('hidden');
+            endGame(true);
+          };
+        } else {
+          video.loop = true;
+        }
+
         video.onerror = () => { container.innerHTML = `<div style="padding:20px;color:#aaa;">[影片載入中: ${m.src}]</div>`; };
         container.appendChild(video);
       }
@@ -724,12 +898,12 @@
       if (isWin) {
         audio.playWin();
         title.innerText = "🎉 挑戰成功！";
-        title.style.color = "#ffd166";
+        title.style.color = "#111111";
         desc.innerText = "太棒了！小比順利收集齊全所有的溫馨記憶！✨";
       } else {
         audio.playFail();
         title.innerText = "挑戰失敗 🐾";
-        title.style.color = "#ef476f";
+        title.style.color = "#d90429";
         desc.innerText = "不小心被柴犬發現啦！再試一次吧！";
       }
 
