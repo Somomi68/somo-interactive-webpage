@@ -155,99 +155,6 @@
       box-shadow: 0 12px 40px rgba(0,0,0,0.25);
       overflow-y: auto;
     }
-
-    /* 上方黑框上的小比動態跑動容器 */
-    .bunny-runner-track {
-      position: absolute;
-      top: -38px;
-      left: 20px;
-      right: 20px;
-      height: 38px;
-      pointer-events: none;
-      overflow: hidden;
-    }
-    .bunny-sprite {
-      position: absolute;
-      width: 38px;
-      height: 38px;
-      animation: bunnyRun 7s ease-in-out infinite;
-      image-rendering: pixelated;
-    }
-
-    @keyframes bunnyRun {
-      0% {
-        left: 0%;
-        transform: scaleX(1);
-      }
-      48% {
-        left: calc(100% - 38px);
-        transform: scaleX(1);
-      }
-      50% {
-        left: calc(100% - 38px);
-        transform: scaleX(-1);
-      }
-      98% {
-        left: 0%;
-        transform: scaleX(-1);
-      }
-      100% {
-        left: 0%;
-        transform: scaleX(1);
-      }
-    }
-
-    .modal-card h1 {
-      font-size: 21px;
-      color: #111111;
-      margin-bottom: 12px;
-      letter-spacing: 1px;
-      font-weight: 800;
-    }
-    .modal-card p {
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 14px;
-      color: #444444;
-      text-align: left;
-      width: 100%;
-    }
-    .rules-box {
-      background: #f4f5f7;
-      border: 1.5px solid #d0d5dd;
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 18px;
-      width: 100%;
-      text-align: left;
-      font-size: 13px;
-      color: #333333;
-      line-height: 1.6;
-    }
-    .rules-box h2 {
-      font-size: 14px;
-      color: #111111;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-    .modal-card .btn-action {
-      background: #222222;
-      color: #ffffff;
-      border: none;
-      padding: 12px 30px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 22px;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #555555;
-      transition: transform 0.1s, background 0.2s;
-      flex-shrink: 0;
-    }
-    .modal-card .btn-action:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 #555555;
-      background: #333333;
-    }
     
     /* 解鎖照片/影片對話框 */
     #memory-media-container {
@@ -298,13 +205,13 @@
         </div>
 
         <h1>小比的記憶花園<br>Somo’s Memory Garden</h1>
-        <p>小比是一隻擁有灰白柔順毛毛、明亮大眼的聰明好兔寶，請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗狗!!</p>
+        <p>小比是一隻擁有灰白柔順毛毛、明亮大眼的聰明好兔寶，請跟著小比的腳步，解鎖屬於牠的每一段故事，但同時要小心不要遇到狗!!</p>
         
         <div class="rules-box">
           <h2>🎮 遊戲規則與操作指南：</h2>
           • <b>控制方式</b>：電腦使用鍵盤 <b>↑ ↓ ← → / WASD</b>，手機請點擊右下角方向鍵。<br>
-          • <b>解鎖記憶</b>：踩踏地圖上散落的 <b>10 個核心物品（Emoji）</b> 來觸發專屬故事與照片影片。<br>
-          • <b>避開柴犬</b>：場景中有巡邏的柴犬狗狗，被狗狗碰觸到則<b>挑戰失敗</b>。<br>
+          • <b>解鎖記憶</b>：踩踏地圖上散落的 <b>10 個核心物品 </b> 來觸發專屬故事與照片影片。<br>
+          • <b>避開柴犬</b>：場景中有巡邏的柴犬狗狗，碰觸到狗則<b>挑戰失敗</b>。<br>
           • <b>勝利條件</b>：收集齊全所有 10 個記憶點即可獲得勝利！
         </div>
 
@@ -326,56 +233,13 @@
     <div id="end-modal" class="modal-overlay hidden">
       <div class="modal-card">
         <h1 id="end-title">挑戰失敗</h1>
-        <p id="end-desc" style="text-align: center; margin-bottom: 20px; color: #444444;">被可愛的柴犬發現啦！</p>
+        <p id="end-desc" style="text-align: center; margin-bottom: 20px; color: #444444;">不可以讓小比遇到狗！</p>
         <button id="btn-restart" class="btn-action">重新挑戰 🔄</button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- 繪製黑框上方跑動的小比 ---
-    function renderRunnerBunny() {
-      const bCanvas = document.getElementById('bunnyCanvas');
-      if (!bCanvas) return;
-      const bCtx = bCanvas.getContext('2d');
-      bCtx.clearRect(0, 0, 38, 38);
-
-      bCtx.save();
-      bCtx.scale(1.18, 1.18);
-
-      bCtx.fillStyle = '#7a8288';
-      bCtx.fillRect(-2 + 12, -5 + 16, 18, 16);
-      bCtx.fillRect(-1 + 12, -11 + 16, 11, 10);
-
-      bCtx.fillStyle = '#7a8288';
-      bCtx.fillRect(-1 + 12, -18 + 16, 4, 8);
-      bCtx.fillRect(4 + 12, -18 + 16, 4, 8);
-      bCtx.fillStyle = '#e8a598';
-      bCtx.fillRect(1 + 12, -16 + 16, 2, 5);
-
-      bCtx.fillStyle = '#ffffff';
-      bCtx.fillRect(-3 + 12, -4 + 16, 13, 11);
-      bCtx.fillRect(-5 + 12, -1 + 16, 15, 7);
-
-      bCtx.fillStyle = '#ffffff';
-      bCtx.fillRect(2 + 12, 6 + 16, 4, 6);
-      bCtx.fillRect(-6 + 12, 8 + 16, 5, 3);
-      bCtx.fillStyle = '#7a8288';
-      bCtx.fillRect(-8 + 12, 3 + 16, 6, 6);
-
-      bCtx.fillStyle = '#ffffff';
-      bCtx.fillRect(-12 + 12, 1 + 16, 4, 5);
-
-      bCtx.fillStyle = '#111111';
-      bCtx.fillRect(5 + 12, -9 + 16, 3, 4);
-      bCtx.fillStyle = '#ffffff';
-      bCtx.fillRect(6 + 12, -9 + 16, 1, 1);
-      bCtx.fillStyle = '#e8a598';
-      bCtx.fillRect(9 + 12, -6 + 16, 2, 2);
-
-      bCtx.restore();
-    }
-    renderRunnerBunny();
 
     // --- 音效與 BGM 系統 ---
     class SoundEngine {
@@ -535,13 +399,13 @@
       { id: 1, gx: 1, gy: 1, emoji: "🔳", title: "1. 大理石板 🔳", type: "p", src: "assets/p1.jpg", text: "天氣太熱啦！瞬間融化成一張冰涼的兔餅 🧊", unlocked: false },
       { id: 2, gx: 9, gy: 1, emoji: "📚", title: "2. 講義書本 📚", type: "p", src: "assets/p2.jpg", text: "小比陪考中：主人說讀完這章有點心吃 ₍ᐢ.ˬ.ᐢ₎", unlocked: false },
       { id: 3, gx: 5, gy: 3, emoji: "🪑", title: "3. 討摸摸椅子 🪑", type: "v", src: "assets/v1.mp4", text: "讀書累了嗎？摸摸小比頭頭可以補充 100% 電量喔！", unlocked: false },
-      { id: 4, gx: 1, gy: 5, emoji: "🍒", title: "4. 蔬果箱 🍒", type: "p", src: "assets/p3.jpg", text: "名副其實的櫻桃小嘴🍒", unlocked: false },
-      { id: 5, gx: 11, gy: 5, emoji: "🌿", title: "5. 一綑牧草 🌿", type: "p", src: "assets/p4.jpg", text: "平常乾草吃多了，也來點新鮮牧草!", unlocked: false },
-      { id: 6, gx: 1, gy: 9, emoji: "🛌", title: "6. 花色棉被 🛌", type: "v", src: "assets/v2.mp4", text: "小比不愛布製品，棉被 枕頭 衣服 毛巾都攻擊⚡", unlocked: false },
-      { id: 7, gx: 9, gy: 9, emoji: "🚽", title: "7. 綠色便盆 🚽", type: "p", src: "assets/p5.jpg", text: "我是隻會用便盆的聰明好兔寶🚽✨", unlocked: false },
-      { id: 8, gx: 17, gy: 1, emoji: "🌊", title: "8. 海浪圖樣 🌊", type: "p", src: "assets/p6.jpg", text: "小比雖然沒搭過船，但有在沙灘奔跑、吹過海風呦!", unlocked: false },
-      { id: 9, gx: 1, gy: 13, emoji: "🚠", title: "9. 貓空纜車 🚠", type: "v", src: "assets/v3.mp4", text: "特別的體驗！飛在空中小兔 Cable Car 🚠", unlocked: false },
-      { id: 10, gx: 17, gy: 13, emoji: "🏃‍♂️", title: "10. 草圖樣 🏃‍♂️", type: "v", src: "assets/v4.mp4", text: "我好像跑太快了嘻嘻～✨", unlocked: false }
+      { id: 4, gx: 1, gy: 5, emoji: "🍒", title: "4. 櫻桃 🍒", type: "p", src: "assets/p3.jpg", text: "名副其實的櫻桃小嘴🍒", unlocked: false },
+      { id: 5, gx: 11, gy: 5, emoji: "🌿", title: "5. 牧草 🌿", type: "p", src: "assets/p4.jpg", text: "平常乾草吃多了，也來點新鮮牧草!", unlocked: false },
+      { id: 6, gx: 1, gy: 9, emoji: "🛌", title: "6. 棉被 🛌", type: "v", src: "assets/v2.mp4", text: "小比不愛布製品，棉被 枕頭 衣服 毛巾都攻擊⚡", unlocked: false },
+      { id: 7, gx: 9, gy: 9, emoji: "🚽", title: "7. 便盆 🚽", type: "p", src: "assets/p5.jpg", text: "我是隻會用便盆的聰明好兔寶🚽✨", unlocked: false },
+      { id: 8, gx: 17, gy: 1, emoji: "🌊", title: "8. 海邊 🌊", type: "p", src: "assets/p6.jpg", text: "小比雖然沒搭過船，但有在沙灘奔跑、吹過海風呦!", unlocked: false },
+      { id: 9, gx: 1, gy: 13, emoji: "🚠", title: "9. 貓空纜車 🚠", type: "v", src: "assets/v3.mp4", text: "特別的體驗！飛在空中的小兔🚠", unlocked: false },
+      { id: 10, gx: 17, gy: 13, emoji: "🏃‍♂️", title: "10. 散步 🏃‍♂️", type: "v", src: "assets/v4.mp4", text: "我好像跑太快了嘻嘻～✨", unlocked: false }
     ];
 
     // --- Canvas 初始化與自適應 ---
